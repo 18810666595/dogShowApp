@@ -9,12 +9,12 @@ import {AppRegistry, TabBarIOS} from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import List from './components/List';
-import Edit from './components/Edit';
-import Account from './components/Account';
+import List from './app/creation';
+import Edit from './app/edit';
+import Account from './app/account';
+
 
 export default class dogShowApp extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
