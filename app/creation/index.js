@@ -20,31 +20,14 @@ export default class List extends Component {
     let ds = new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1 !== r2
     });
+    this.ds = ds;
     this.state = {
-      dataSource: ds.cloneWithRows([
-        {
-          "_id": "820000198511046318",
-          "thumb": "http://dummyimage.com/1280x720/79d7f2",
-          "video": "//v3.mukewang.com/shizhan/59f14d14e520e5b9208b45cb/H.mp4",
-          "title": "年毛百条大别"
-        },
-        {
-          "_id": "530000199810086710",
-          "thumb": "http://dummyimage.com/1280x720/f2e979",
-          "video": "//v3.mukewang.com/shizhan/59f14d14e520e5b9208b45cb/H.mp4",
-          "title": "方济商角工"
-        },
-        {
-          "_id": "540000198203221236",
-          "thumb": "http://dummyimage.com/1280x720/c679f2",
-          "video": "//v3.mukewang.com/shizhan/59f14d14e520e5b9208b45cb/H.mp4",
-          "title": "须正走离并"
-        },
-      ]),
+      dataSource: ds.cloneWithRows([]),
     };
+
   }
 
-  static _renderRow(row) {
+  static renderRow(row) {
     return (
         <TouchableHighlight>
           <View style={styles.item}>
@@ -75,13 +58,38 @@ export default class List extends Component {
                     style={styles.commentIcon}
                     size={28}
                 />
-                <Text style={styles.handleText}>评论</Text>
+                <Text style={styles.handleText}>评论12</Text>
               </View>
             </View>
 
           </View>
         </TouchableHighlight>
     );
+  }
+
+  /**
+   * async 函数异步获取创意列表
+   * @return {Promise<any>}
+   */
+  static async getCreationLists() {
+    try {
+      let response = await fetch('http://rap2api.taobao.org/app/mock/3605/GET/api/creations');
+      let result = await response.json();
+      console.log(result);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  componentDidMount() {
+    List.getCreationLists().then(res => {
+      console.log(res.data);
+      console.log(this.ds,  this.state.dataSource);
+      this.setState({
+        dataSource: this.ds.cloneWithRows(res.data)
+      });
+    });
   }
 
   render() {
@@ -94,7 +102,7 @@ export default class List extends Component {
           </View>
           <ListView
               dataSource={this.state.dataSource}
-              renderRow={List._renderRow.bind(this)}
+              renderRow={List.renderRow.bind(this)}
               enableEmptySections={true}
               automaticallyAdjustContentInsets={false}
           />
