@@ -23,22 +23,22 @@ export default class List extends Component {
     this.state = {
       dataSource: ds.cloneWithRows([
         {
-          "_id": "210000199112204906",
-          "thumb": "http://dummyimage.com/1200x600/f27999",
+          "_id": "820000198511046318",
+          "thumb": "http://dummyimage.com/1280x720/79d7f2",
           "video": "//v3.mukewang.com/shizhan/59f14d14e520e5b9208b45cb/H.mp4",
-          "title": "住个热置离他"
+          "title": "年毛百条大别"
         },
         {
-          "_id": "410000199205021823",
-          "thumb": "http://dummyimage.com/1200x600/79bcf2",
+          "_id": "530000199810086710",
+          "thumb": "http://dummyimage.com/1280x720/f2e979",
           "video": "//v3.mukewang.com/shizhan/59f14d14e520e5b9208b45cb/H.mp4",
-          "title": "明属多会专众"
+          "title": "方济商角工"
         },
         {
-          "_id": "430000199703216774",
-          "thumb": "http://dummyimage.com/1200x600/dff279",
+          "_id": "540000198203221236",
+          "thumb": "http://dummyimage.com/1280x720/c679f2",
           "video": "//v3.mukewang.com/shizhan/59f14d14e520e5b9208b45cb/H.mp4",
-          "title": "治拉周采"
+          "title": "须正走离并"
         },
       ]),
     };
