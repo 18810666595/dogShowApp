@@ -85,7 +85,7 @@ export default class List extends Component {
   componentDidMount() {
     List.getCreationLists().then(res => {
       console.log(res.data);
-      console.log(this.ds,  this.state.dataSource);
+      console.log(this.ds);
       this.setState({
         dataSource: this.ds.cloneWithRows(res.data)
       });
