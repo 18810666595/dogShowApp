@@ -197,6 +197,7 @@ export default class List extends Component {
               onEndReached={List._fetchMoreData.bind(this)}
               onEndReachedThreshold={20}
               renderFooter={List._renderFooter.bind(this)}
+              showsVerticalScrollIndicator={false}
           />
         </View>
     );
