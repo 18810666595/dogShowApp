@@ -11,6 +11,9 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import request from '../common/request';
+import url from '../common/url';
+
 const screenWidth = Dimensions.get('window').width; //获取屏幕的宽度
 
 
@@ -24,7 +27,6 @@ export default class List extends Component {
     this.state = {
       dataSource: ds.cloneWithRows([]),
     };
-
   }
 
   static renderRow(row) {
@@ -61,30 +63,16 @@ export default class List extends Component {
                 <Text style={styles.handleText}>评论12</Text>
               </View>
             </View>
-
           </View>
         </TouchableHighlight>
     );
   }
 
-  /**
-   * async 函数异步获取创意列表
-   * @return {Promise<any>}
-   */
-  static async getCreationLists() {
-    try {
-      let response = await fetch('http://rap2api.taobao.org/app/mock/3605/GET/api/creations');
-      let result = await response.json();
-      console.log(result);
-      return result;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   componentDidMount() {
-    List.getCreationLists().then(res => {
-      console.log(res.data);
+    request.get(url.creations, {
+      accessToken: 'xxxxx'
+    }).then(res => {
+      console.log('data',res.data);
       console.log(this.ds);
       this.setState({
         dataSource: this.ds.cloneWithRows(res.data)

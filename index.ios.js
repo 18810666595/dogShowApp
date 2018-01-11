@@ -13,7 +13,6 @@ import List from './app/creation';
 import Edit from './app/edit';
 import Account from './app/account';
 
-
 export default class dogShowApp extends Component {
   constructor(props) {
     super(props);
