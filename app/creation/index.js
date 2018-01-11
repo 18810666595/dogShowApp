@@ -6,7 +6,8 @@ import {
   ListView,
   TouchableHighlight,
   Image,
-  Dimensions
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -25,7 +26,10 @@ export default class List extends Component {
     });
     this.ds = ds;
     this.state = {
+      isLoadingTail: false,
+      creationLists: [],
       dataSource: ds.cloneWithRows([]),
+      page: 0,
     };
   }
 
@@ -68,19 +72,116 @@ export default class List extends Component {
     );
   }
 
+
+  componentWillMount() {
+    // console.log('componentWillMount');
+  }
+
+  componentWillUpdate() {
+    // console.log('componentWillUpdate');
+  }
+
+  componentDidUpdate() {
+    // console.log('componentDidUpdate');
+  }
+
   componentDidMount() {
-    request.get(url.creations, {
-      accessToken: 'xxxxx'
-    }).then(res => {
-      console.log('data',res.data);
-      console.log(this.ds);
-      this.setState({
-        dataSource: this.ds.cloneWithRows(res.data)
-      });
+    console.log('componentDidMount');
+    let page = this.state.page;
+    List._fetchData.call(this, page); //class 的声明方法内的私有方法需要指定 this
+  }
+
+  /**
+   * 发请求获取数据列表
+   * @param page
+   * @private
+   */
+  static _fetchData(page) {
+    console.log('_fetchData start');
+    this.setState({
+      isLoadingTail: true,
     });
+    setTimeout(() => {
+      request.get(url.creations, {
+        accessToken: 'abcde',
+        page: page
+      }).then(res => {
+        if (!res.success) return;   //如果请求返回失败，则退出函数
+
+        console.log('data', res.data);
+        let list = this.state.creationLists.concat(res.data);
+        this.setState({
+          total: res.total,
+          isLoadingTail: false,
+          creationLists: list,
+          page: this.state.page + 1,
+          dataSource: this.ds.cloneWithRows(list)
+        });
+        console.log('creationLists', this.state.creationLists);
+      }).catch(error => {
+        this.setState({
+          isLoading: false
+        });
+        throw error;
+      });
+    }, 2000);
+
+  }
+
+  /**
+   * 是否还有更多数据
+   * @return {boolean}
+   * @private
+   */
+  static _hasMore() {
+    let creationCount = this.state.creationLists.length;
+    let creationTotal = this.state.total;
+    console.log('creationCount', creationCount);
+    console.log('creationTotal', creationTotal);
+    return creationCount < creationTotal;
+  }
+
+  /**
+   * 获取更多的数据
+   * @private
+   */
+  static _fetchMoreData() {
+    console.log('_fetchMoreData');
+    let page = this.state.page;
+    console.log('page', page);
+    if (!List._hasMore.call(this) || this.state.isLoadingTail) {
+      console.log('不要获取更多数据');
+      return;
+    }
+    console.log('开始获取更多数据啦~~~');
+    List._fetchData.call(this, page);
+  }
+
+  static _renderFooter() {
+    if (!List._hasMore.call(this) && this.state.creationLists.length) {
+      // 数据没有更多的时候
+      return (
+          <View style={styles.loadingMore}>
+            <Text style={styles.loadingText}>
+              没有更多了
+            </Text>
+          </View>
+      );
+    }
+
+    if (!this.state.isLoadingTail) {
+      return (
+          <View style={styles.loadingMore}/>
+      );
+    }
+
+    return (
+        <ActivityIndicator style={styles.loadingMore}/>
+    );
   }
 
   render() {
+    console.log('render start');
     return (
         <View style={styles.container}>
           <View style={styles.header}>
@@ -93,6 +194,9 @@ export default class List extends Component {
               renderRow={List.renderRow.bind(this)}
               enableEmptySections={true}
               automaticallyAdjustContentInsets={false}
+              onEndReached={List._fetchMoreData.bind(this)}
+              onEndReachedThreshold={20}
+              renderFooter={List._renderFooter.bind(this)}
           />
         </View>
     );
@@ -169,5 +273,12 @@ const styles = StyleSheet.create({
   commentIcon: {
     fontSize: 22,
     color: '#333',
+  },
+  loadingMore: {
+    marginVertical: 20,
+  },
+  loadingText: {
+    color: '#777',
+    textAlign: 'center',
   }
 });
