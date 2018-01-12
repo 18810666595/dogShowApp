@@ -7,7 +7,8 @@ import {
   TouchableHighlight,
   Image,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -30,6 +31,7 @@ export default class List extends Component {
       creationLists: [],
       dataSource: ds.cloneWithRows([]),
       page: 0,
+      isRefreshing: false,
     };
   }
 
@@ -98,18 +100,29 @@ export default class List extends Component {
    */
   static _fetchData(page) {
     console.log('_fetchData start');
-    this.setState({
-      isLoadingTail: true,
-    });
-    setTimeout(() => {
-      request.get(url.creations, {
-        accessToken: 'abcde',
-        page: page
-      }).then(res => {
-        if (!res.success) return;   //如果请求返回失败，则退出函数
+    if (-1 !== page) {
+      this.setState({
+        isLoadingTail: true,
+      });
+    } else {
+      this.setState({
+        isRefreshing: true,
+      });
+    }
 
-        console.log('data', res.data);
-        let list = this.state.creationLists.concat(res.data);
+
+    // setTimeout(() => {
+    request.get(url.creations, {
+      accessToken: 'abcde',
+      page: page
+    }).then(res => {
+      if (!res.success) return;   //如果请求返回失败，则退出函数
+
+      console.log('data', res.data);
+
+      let list;
+      if (page !== -1) {
+        list = this.state.creationLists.concat(res.data);
         this.setState({
           total: res.total,
           isLoadingTail: false,
@@ -117,14 +130,33 @@ export default class List extends Component {
           page: this.state.page + 1,
           dataSource: this.ds.cloneWithRows(list)
         });
-        console.log('creationLists', this.state.creationLists);
-      }).catch(error => {
+        console.log('creationLists', list);
+      }
+      else {
+        list = res.data.concat(this.state.creationLists);
+        this.setState({
+          total: res.total,
+          isRefreshing: false,
+          creationLists: list,
+          dataSource: this.ds.cloneWithRows(list)
+        });
+        console.log('creationLists', list);
+      }
+
+    }).catch(error => {
+      if (page !== -1) {
         this.setState({
           isLoading: false
         });
-        throw error;
-      });
-    }, 2000);
+      } else {
+        this.setState({
+          isRefreshing: false
+        });
+      }
+
+      throw error;
+    });
+    // }, 2000);
 
   }
 
@@ -179,6 +211,24 @@ export default class List extends Component {
         <ActivityIndicator style={styles.loadingMore}/>
     );
   }
+  static _renderHeader() {
+    if (!List._hasMore.call(this) && this.state.creationLists.length) {
+      // 数据没有更多的时候
+      return (
+          <View style={styles.loadingMore}>
+            <Text style={styles.loadingText}>
+              已经是最新了
+            </Text>
+          </View>
+      );
+    }
+  }
+
+  static _onRefresh() {
+    if (this.state.isRefreshing || !List._hasMore.call(this)) return;
+
+    List._fetchData.call(this, -1);
+  }
 
   render() {
     console.log('render start');
@@ -197,7 +247,16 @@ export default class List extends Component {
               onEndReached={List._fetchMoreData.bind(this)}
               onEndReachedThreshold={20}
               renderFooter={List._renderFooter.bind(this)}
+              renderHeader={List._renderHeader.bind(this)}
               showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl
+                    refreshing={this.state.isRefreshing}
+                    onRefresh={List._onRefresh.bind(this)}
+                    tintColor="#ff6600"
+                    title="拼命加载中"
+                />
+              }
           />
         </View>
     );
@@ -277,6 +336,10 @@ const styles = StyleSheet.create({
   },
   loadingMore: {
     marginVertical: 20,
+  },
+  xxx: {
+    marginVertical: 100,
+    backgroundColor: '#000',
   },
   loadingText: {
     color: '#777',
