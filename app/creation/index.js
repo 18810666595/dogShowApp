@@ -208,7 +208,7 @@ export default class List extends Component {
     }
 
     return (
-        <ActivityIndicator style={styles.loadingMore}/>
+        <ActivityIndicator style={styles.loadingFooter}/>
     );
   }
   static _renderHeader() {
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   loadingMore: {
-    marginTop: -25,
+    marginTop: -30,
     paddingVertical: 10,
   },
   loadingText: {
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   loadingFooter: {
-    marginBottom: -25,
+    marginBottom: -30,
     paddingVertical: 10,
   }
 });
