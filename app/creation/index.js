@@ -193,7 +193,7 @@ export default class List extends Component {
     if (!List._hasMore.call(this) && this.state.creationLists.length) {
       // 数据没有更多的时候
       return (
-          <View style={styles.loadingMore}>
+          <View style={styles.loadingFooter}>
             <Text style={styles.loadingText}>
               没有更多了
             </Text>
@@ -335,14 +335,15 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   loadingMore: {
-    marginVertical: 20,
-  },
-  xxx: {
-    marginVertical: 100,
-    backgroundColor: '#000',
+    marginTop: -25,
+    paddingVertical: 10,
   },
   loadingText: {
     color: '#777',
     textAlign: 'center',
+  },
+  loadingFooter: {
+    marginBottom: -25,
+    paddingVertical: 10,
   }
 });
