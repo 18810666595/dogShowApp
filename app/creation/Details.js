@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import Video from 'react-native-video';
+
 const screenWidth = Dimensions.get('window').width; //获取屏幕的宽度
 // console.log('Video', Video);
 
@@ -21,7 +22,10 @@ export default class Details extends Component {
       muted: false,
       resizeMode: 'contain',
       repeat: false,
-      videoReady: false
+      videoReady: false,
+      videoProgress: 0,
+      videoTotal: 0,
+      currentTime: 0,
     };
   }
 
@@ -35,33 +39,38 @@ export default class Details extends Component {
   //   })
   // }
 
-  static _onLoadStart(){
-    console.log('_onLoadStart')
+  static _onLoadStart() {
+    console.log('_onLoadStart');
   }
 
-  static _onLoad(){
-    console.log('_onLoad')
+  static _onLoad() {
+    console.log('_onLoad');
   }
 
-  static _onProgress(data){
+  static _onProgress(data) {
+    let {playableDuration, currentTime} = data;
+    let progress = (currentTime / playableDuration).toFixed(3);
     console.log(data);
-    console.log('_onProgress');
-    if(!this.state.videoReady){
-      this.setState({
-        videoReady: true,
-      })
+    console.log('_onProgress', progress);
+
+    this.setState({
+      videoReady: true,
+      videoTotal: playableDuration,
+      currentTime: currentTime,
+      videoProgress: progress,
+    });
+    if (!this.state.videoReady) {
     }
   }
 
-  static _onEnd(){
-    console.log('_onEnd')
+  static _onEnd() {
+    console.log('_onEnd');
   }
 
-  static _onError(e){
+  static _onError(e) {
     console.log(e);
-    console.log('_onError')
+    console.log('_onError');
   }
-
 
 
   render() {
@@ -98,6 +107,11 @@ export default class Details extends Component {
             />
             {!this.state.videoReady && <ActivityIndicator size='large' color='#ee735c' style={styles.onLoading}/>}
           </View>
+          <View style={styles.progressBox}>
+            <View style={[styles.progressBar, {width: screenWidth * this.state.videoProgress}]}>
+
+            </View>
+          </View>
         </View>
     );
   }
@@ -113,8 +127,8 @@ const styles = StyleSheet.create({
   },
   videoBox: {
     width: screenWidth,
-    height:360,
-    backgroundColor:'#000',
+    height: 360,
+    backgroundColor: '#000',
   },
   video: {
     width: screenWidth,
@@ -128,6 +142,15 @@ const styles = StyleSheet.create({
     width: screenWidth,
     alignSelf: 'flex-end',
     backgroundColor: 'transparent',
+  },
+  progressBox: {
+    width: screenWidth,
+    height: 3,
+    backgroundColor: '#ccc',
+  },
+  progressBar: {
+    height: 3,
+    backgroundColor: '#ee735c'
   }
 
 });
