@@ -161,16 +161,5 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#333',
   },
-  loadingMore: {
-    marginTop: -30,
-    paddingVertical: 10,
-  },
-  loadingText: {
-    color: '#777',
-    textAlign: 'center',
-  },
-  loadingFooter: {
-    marginBottom: -30,
-    paddingVertical: 10,
-  }
+
 });

@@ -255,5 +255,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600'
   },
-
+  loadingMore: {
+    marginTop: -30,
+    paddingVertical: 10,
+  },
+  loadingText: {
+    color: '#777',
+    textAlign: 'center',
+  },
+  loadingFooter: {
+    marginBottom: -30,
+    paddingVertical: 10,
+  }
 });

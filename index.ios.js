@@ -53,7 +53,7 @@ export default class dogShowApp extends Component {
                 renderScene={(route, navigator) => {
                   let Component = route.component;
                   console.log(Component === List);
-                  console.log('Component',Component);
+                  console.log('Component', Component);
                   return <Component {...route.params} navigator={navigator}/>;
                 }}
             />
