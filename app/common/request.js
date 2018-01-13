@@ -16,7 +16,7 @@ export default class request {
     try {
       let response = await fetch(url);
       let result = await response.json();
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (error) {
       throw error;
@@ -29,9 +29,9 @@ export default class request {
     });
     try {
       let response = await fetch(url, options);
-      console.log(response);
+      // console.log(response);
       let result = await response.json();
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (error) {
       throw error;
