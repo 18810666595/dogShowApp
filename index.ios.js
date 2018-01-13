@@ -5,7 +5,11 @@
  */
 
 import React, {Component} from 'react';
-import {AppRegistry, TabBarIOS} from 'react-native';
+import {
+  AppRegistry,
+  TabBarIOS,
+  Navigator,
+} from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -35,7 +39,25 @@ export default class dogShowApp extends Component {
                   selectedTab: 'list',
                 });
               }}>
-            <List/>
+
+            {/*<List/>*/}
+
+            <Navigator
+                initialRoute={{
+                  name: 'list',
+                  component: List,
+                }}
+                configureScene={(/*route, routeStack*/) => {
+                  return Navigator.SceneConfigs.FloatFromRight;
+                }}
+                renderScene={(route, navigator) => {
+                  let Component = route.component;
+                  console.log('Component',Component);
+                  return <Component {...route.params} navigator={navigator}/>;
+                }}
+            />
+
+
           </Icon.TabBarItem>
           <Icon.TabBarItem
               iconName='ios-recording-outline'
