@@ -199,13 +199,12 @@ export default class List extends Component {
   }
 
   static _loadPage(row) {
-    console.log('row#####',row);
+    // console.log('row#####',row);
     this.props.navigator.push({
       name: 'details',
       component: Details,
       params: {
-        row,
-        xxx: 'hello'
+        data: row
       },
     });
   }
