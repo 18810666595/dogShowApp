@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 
 import Video from 'react-native-video';
@@ -20,7 +21,7 @@ export default class Details extends Component {
       muted: false,
       resizeMode: 'contain',
       repeat: false,
-
+      videoReady: false
     };
   }
 
@@ -44,7 +45,12 @@ export default class Details extends Component {
 
   static _onProgress(data){
     console.log(data);
-    console.log('_onProgress')
+    console.log('_onProgress');
+    if(!this.state.videoReady){
+      this.setState({
+        videoReady: true,
+      })
+    }
   }
 
   static _onEnd(){
@@ -86,8 +92,11 @@ export default class Details extends Component {
                 onProgress={Details._onProgress.bind(this)} //视频在播放中，每隔 250ms 调用该函数，会带上当前已播放时间作为参数
                 onEnd={Details._onEnd.bind(this)} //播放结束
                 onError={Details._onError.bind(this)} //视频出错
-            />
 
+                //加载中组件
+
+            />
+            {!this.state.videoReady && <ActivityIndicator size='large' color='#ee735c' style={styles.onLoading}/>}
           </View>
         </View>
     );
@@ -111,6 +120,14 @@ const styles = StyleSheet.create({
     width: screenWidth,
     height: 360,
     backgroundColor: '#000',
+  },
+  onLoading: {
+    position: 'absolute',
+    top: 180,
+    left: 0,
+    width: screenWidth,
+    alignSelf: 'flex-end',
+    backgroundColor: 'transparent',
   }
 
 });
