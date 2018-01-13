@@ -52,13 +52,12 @@ export default class dogShowApp extends Component {
                 }}
                 renderScene={(route, navigator) => {
                   let Component = route.component;
-                  console.log(Component === List);
-                  console.log('Component', Component);
-                  return <Component {...route.params} navigator={navigator}/>;
+                  console.log('route?????',route);
+                  // console.log(Component === List);
+                  // console.log('Component', Component);
+                  return <Component params={route.params} navigator={navigator}/>;
                 }}
             />
-
-
           </Icon.TabBarItem>
           <Icon.TabBarItem
               iconName='ios-recording-outline'

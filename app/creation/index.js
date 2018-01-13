@@ -14,6 +14,7 @@ import {
 
 // import Icon from 'react-native-vector-icons/Ionicons';
 import Item from './Item';
+import Details from './Details';
 
 import request from '../common/request';
 import url from '../common/url';
@@ -39,25 +40,17 @@ export default class List extends Component {
 
   static renderRow(row) {
     return (
-        <Item row={row}/>
+        <Item
+            key={row._id}
+            onSelect={List._loadPage.bind(this, row)}
+            row={row}
+            that={this}
+        />
     );
   }
 
-
-  componentWillMount() {
-    // console.log('componentWillMount');
-  }
-
-  componentWillUpdate() {
-    // console.log('componentWillUpdate');
-  }
-
-  componentDidUpdate() {
-    // console.log('componentDidUpdate');
-  }
-
   componentDidMount() {
-    // console.log('componentDidMount');
+    // console.log('navigator', this.props.navigator);
     let page = this.state.page;
     // console.log('page didmount', page);
     List._fetchData.call(this, page); //class 的声明方法内的私有方法需要指定 this
@@ -203,6 +196,18 @@ export default class List extends Component {
     if (this.state.isRefreshing || !List._hasMore.call(this)) return;
 
     List._fetchData.call(this, -1);
+  }
+
+  static _loadPage(row) {
+    console.log('row#####',row);
+    this.props.navigator.push({
+      name: 'details',
+      component: Details,
+      params: {
+        row,
+        xxx: 'hello'
+      },
+    });
   }
 
   render() {

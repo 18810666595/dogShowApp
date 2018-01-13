@@ -5,7 +5,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-export default class List extends Component {
+export default class Edit extends Component {
   constructor(props){
     super(props)
   }

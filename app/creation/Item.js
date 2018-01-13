@@ -23,6 +23,7 @@ export default class Item extends Component {
       up: row.voted,
       row: this.props.row
     };
+    // console.log('onSelect',this.props.onSelect);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,7 +34,7 @@ export default class Item extends Component {
     });
   }
 
-  _up() {
+  static _up() {
     let up = !this.state.up;
     let row = this.state.row;
     let body = {
@@ -59,9 +60,9 @@ export default class Item extends Component {
 
   render() {
     let row = this.state.row;
-
+    // let that= this.props.that;
     return (
-        <TouchableHighlight>
+        <TouchableHighlight onPress={this.props.onSelect}>
           <View style={styles.item}>
             <Text style={styles.title}>{row.title}</Text>
             <Image
@@ -80,9 +81,9 @@ export default class Item extends Component {
                     name={this.state.up ? 'ios-heart' : 'ios-heart-outline'}
                     style={this.state.up ? styles.up : styles.down}
                     size={28}
-                    onPress={this._up.bind(this)}
+                    onPress={Item._up.bind(this)}
                 />
-                <Text style={styles.handleText} onPress={this._up.bind(this)}>喜欢</Text>
+                <Text style={styles.handleText} onPress={Item._up.bind(this)}>喜欢</Text>
               </View>
 
               <View style={styles.handleBox}>
