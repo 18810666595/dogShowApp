@@ -66,9 +66,10 @@ export default class Details extends Component {
     // console.log(data);
     // console.log('_onProgress', progress);
     this.setState({
-      videoTotal: playableDuration,
+      playing: true,
       currentTime: currentTime,
       videoProgress: progress,
+      videoTotal: playableDuration,
     });
   }
 
@@ -107,6 +108,19 @@ export default class Details extends Component {
         paused: false,
       });
     }
+  }
+
+  static _jumpTo(e) {
+    console.log('jumpTo');
+    // console.log(e.nativeEvent);
+    let {locationX} = e.nativeEvent;  //获元素取点击位置的横坐标
+    console.log(locationX);
+    let percent = locationX / screenWidth;  //点击位置的进度条比例
+    let jumpTime = percent * this.state.videoTotal; //对应比例处的视频时间
+    this.refs.videoPlayer.seek(jumpTime); //视频跳转到对应时间
+    this.setState({
+      paused: false,    //视频取消暂停
+    });
   }
 
   render() {
@@ -171,7 +185,7 @@ export default class Details extends Component {
                   <Icon
                       name='ios-play'
                       style={styles.playIcon}
-                      size={40}
+                      size={60}
                       onPress={Details._replay.bind(this)}
                   /> : null
             }
@@ -180,6 +194,9 @@ export default class Details extends Component {
               /*视频进度条*/
               <View style={styles.progressBox}>
                 <View style={[styles.progressBar, {width: screenWidth * this.state.videoProgress}]}/>
+                <TouchableOpacity ref='jumpBar' style={styles.jumpBar} onPress={Details._jumpTo.bind(this)}>
+
+                </TouchableOpacity>
               </View>
             }
           </View>
@@ -233,6 +250,15 @@ const styles = StyleSheet.create({
     width: 1,
     height: 3,
     backgroundColor: '#ee735c'
+  },
+  jumpBar: {
+    position: 'absolute',
+    top: -2,
+    left: 0,
+    width: screenWidth,
+    height: 7,
+    // borderWidth: 1,
+    // borderColor: '#f00'
   },
   playIcon: {
     position: 'absolute',
