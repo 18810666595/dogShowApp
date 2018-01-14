@@ -87,7 +87,7 @@ export default class Details extends Component {
   }
 
   static _replay(){
-    this.refs.videoPlayer.seek(20);  //视频重新播放
+    this.refs.videoPlayer.seek(0);  //视频重新播放
   }
 
   render() {
