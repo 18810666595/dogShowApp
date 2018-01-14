@@ -1,7 +1,7 @@
 import request from "../common/request";
 import {
   AlertIOS,
-  TouchableHighlight,
+  // TouchableHighlight,
   TouchableOpacity,
   View,
   Text,
