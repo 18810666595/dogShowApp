@@ -185,7 +185,7 @@ export default class Details extends Component {
                   <Icon
                       name='ios-play'
                       style={styles.playIcon}
-                      size={60}
+                      size={40}
                       onPress={Details._replay.bind(this)}
                   /> : null
             }
