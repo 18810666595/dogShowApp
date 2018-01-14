@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 
 import Video from 'react-native-video';
@@ -29,6 +30,7 @@ export default class Details extends Component {
       currentTime: 0,
       videoOK: true,
       playing: false,
+      paused: true,
     };
   }
 
@@ -48,21 +50,22 @@ export default class Details extends Component {
 
   static _onLoad() {
     console.log('_onLoad');
-  }
-
-  static _onProgress(data) {
     if (!this.state.videoReady) {
       this.setState({
         videoReady: true,
+        playing: true,
       });
     }
+  }
+
+  static _onProgress(data) {
+
 
     let {playableDuration, currentTime} = data;
     let progress = (currentTime / playableDuration).toFixed(3);
     // console.log(data);
     // console.log('_onProgress', progress);
     this.setState({
-      playing: true,
       videoTotal: playableDuration,
       currentTime: currentTime,
       videoProgress: progress,
@@ -86,8 +89,24 @@ export default class Details extends Component {
     console.log('_onError');
   }
 
-  static _replay(){
+  static _replay() {
     this.refs.videoPlayer.seek(0);  //视频重新播放
+  }
+
+  static _pause() {
+    if (!this.state.paused) {
+      this.setState({
+        paused: true,
+      });
+    }
+  }
+
+  static _resume() {
+    if (this.state.paused) {
+      this.setState({
+        paused: false,
+      });
+    }
   }
 
   render() {
@@ -106,7 +125,7 @@ export default class Details extends Component {
                 source={{uri: data.video}}  //视频地址
                 style={styles.video}
                 volume={1}  //声音放大倍数
-                paused={false}  //视频刚开始是否暂停
+                paused={this.state.paused}  //视频刚开始是否暂停
                 rate={this.state.rate}    //视频播放时候的速度
                 muted={this.state.muted}  //视频是否静音
                 resizeMode={this.state.resizeMode}  //视频的拉伸方式
@@ -131,11 +150,27 @@ export default class Details extends Component {
             }
 
             {
-              /*视频重新播放*/
+              /*视频暂停、播放功能*/
               this.state.videoReady && this.state.playing ?
+                  <TouchableOpacity style={styles._pauseBtn} activeOpacity={1} onPress={Details._pause.bind(this)}>
+                    {
+                      this.state.paused ?
+                          <Icon
+                              name='ios-play'
+                              style={styles.playIcon}
+                              size={40}
+                              onPress={Details._resume.bind(this)}
+                          /> : null
+                    }
+                  </TouchableOpacity> : null
+            }
+
+            {
+              /*视频重新播放*/
+              this.state.videoReady && !this.state.playing ?
                   <Icon
                       name='ios-play'
-                      style={styles.replay}
+                      style={styles.playIcon}
                       size={40}
                       onPress={Details._replay.bind(this)}
                   /> : null
@@ -199,7 +234,7 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: '#ee735c'
   },
-  replay: {
+  playIcon: {
     position: 'absolute',
     top: 150,
     right: screenWidth / 2 - 30,
@@ -213,4 +248,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     color: '#ed7b66',
   },
+  _pauseBtn: {
+    position: 'absolute',
+    width: screenWidth,
+    height: 360,
+    left: 0,
+    top: 0,
+  }
 });
