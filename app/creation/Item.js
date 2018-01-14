@@ -2,6 +2,7 @@ import request from "../common/request";
 import {
   AlertIOS,
   TouchableHighlight,
+  TouchableOpacity,
   View,
   Text,
   Image,
@@ -12,6 +13,7 @@ import React, {Component} from 'react';
 
 import url from "../common/url";
 import Icon from 'react-native-vector-icons/Ionicons';
+
 const screenWidth = Dimensions.get('window').width; //获取屏幕的宽度
 
 export default class Item extends Component {
@@ -62,8 +64,8 @@ export default class Item extends Component {
     let row = this.state.row;
     // let that= this.props.that;
     return (
-        <TouchableHighlight onPress={this.props.onSelect}>
-          <View style={styles.item}>
+        <View style={styles.item}>
+          <TouchableOpacity onPress={this.props.onSelect} activeOpacity={1}>
             <Text style={styles.title}>{row.title}</Text>
             <Image
                 source={{uri: row.thumb}}
@@ -75,28 +77,29 @@ export default class Item extends Component {
                   size={28}
               />
             </Image>
-            <View style={styles.itemFooter}>
-              <View style={styles.handleBox}>
-                <Icon
-                    name={this.state.up ? 'ios-heart' : 'ios-heart-outline'}
-                    style={this.state.up ? styles.up : styles.down}
-                    size={28}
-                    onPress={Item._up.bind(this)}
-                />
-                <Text style={styles.handleText} onPress={Item._up.bind(this)}>喜欢</Text>
-              </View>
+          </TouchableOpacity>
 
-              <View style={styles.handleBox}>
-                <Icon
-                    name='ios-chatboxes-outline'
-                    style={styles.commentIcon}
-                    size={28}
-                />
-                <Text style={styles.handleText}>评论</Text>
-              </View>
+          <View style={styles.itemFooter}>
+            <View style={styles.handleBox}>
+              <Icon
+                  name={this.state.up ? 'ios-heart' : 'ios-heart-outline'}
+                  style={this.state.up ? styles.up : styles.down}
+                  size={28}
+                  onPress={Item._up.bind(this)}
+              />
+              <Text style={styles.handleText} onPress={Item._up.bind(this)}>喜欢</Text>
+            </View>
+
+            <View style={styles.handleBox}>
+              <Icon
+                  name='ios-chatboxes-outline'
+                  style={styles.commentIcon}
+                  size={28}
+              />
+              <Text style={styles.handleText}>评论</Text>
             </View>
           </View>
-        </TouchableHighlight>
+        </View>
     );
   }
 
@@ -108,6 +111,10 @@ const styles = StyleSheet.create({
     width: screenWidth,
     marginBottom: 10,
     backgroundColor: '#fff',
+  },
+  thumbBox: {
+    width: screenWidth,
+    height: screenWidth / 1280 * 720,
   },
   thumb: {
     width: screenWidth,

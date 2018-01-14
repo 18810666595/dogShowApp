@@ -130,9 +130,13 @@ export default class Details extends Component {
     // console.log('this.props', this.props);
     return (
         <View style={styles.container}>
-          <Text onPress={Details._back.bind(this)}>
-            详情页面
-          </Text>
+          <View style={styles.header}>
+            <TouchableOpacity style={styles.backBox} onPress={Details._back.bind(this)}>
+              <Icon name={'ios-arrow-back'} size={18} style={styles.backIcon}/>
+              <Text>返回</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle} numberOfLines={1}>{data.title}</Text>
+          </View>
           <View style={styles.videoBox}>
             <Video
                 ref='videoPlayer'
@@ -210,9 +214,40 @@ export default class Details extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  header: {
+    backgroundColor: '#fff',
+    position: 'relative',
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    width: screenWidth,
+    marginTop: 30,
+    height: 40,
+    borderBottomWidth:1,
+    borderColor: 'rgba(0,0,0,0.1)',
+  },
+  backBox: {
+    backgroundColor: '#ccc',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 40,
+    width: 60,
+    borderRadius: 4,
+    paddingHorizontal: 10,
+  },
+  headerTitle: {
+    // backgroundColor: 'red',
+    width: screenWidth - 150,
+    textAlign: 'center',
+    fontSize: 18,
   },
   videoBox: {
     width: screenWidth,
