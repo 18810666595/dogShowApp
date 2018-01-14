@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.1)',
   },
   backBox: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#f9e66f',
     position: 'absolute',
     left: 0,
     top: 0,
@@ -240,8 +240,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 40,
     width: 60,
-    borderRadius: 4,
+    borderRadius: 10,
     paddingHorizontal: 10,
+  },
+  backIcon: {
+    color: '#785348',
+    fontSize: 18,
+    marginRight: 5,
   },
   headerTitle: {
     // backgroundColor: 'red',
