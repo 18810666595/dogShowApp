@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import Video from 'react-native-video';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const screenWidth = Dimensions.get('window').width; //获取屏幕的宽度
 // console.log('Video', Video);
@@ -26,6 +27,8 @@ export default class Details extends Component {
       videoProgress: 0,
       videoTotal: 0,
       currentTime: 0,
+      videoOK: true,
+      playing: false,
     };
   }
 
@@ -48,34 +51,48 @@ export default class Details extends Component {
   }
 
   static _onProgress(data) {
+    if (!this.state.videoReady) {
+      this.setState({
+        videoReady: true,
+      });
+    }
+
     let {playableDuration, currentTime} = data;
     let progress = (currentTime / playableDuration).toFixed(3);
-    console.log(data);
-    console.log('_onProgress', progress);
-
+    // console.log(data);
+    // console.log('_onProgress', progress);
     this.setState({
-      videoReady: true,
+      playing: true,
       videoTotal: playableDuration,
       currentTime: currentTime,
       videoProgress: progress,
     });
-    if (!this.state.videoReady) {
-    }
   }
 
   static _onEnd() {
+    this.setState({
+      playing: false,
+      videoProgress: 1,
+    });
     console.log('_onEnd');
   }
 
   static _onError(e) {
+    this.setState({
+      videoOK: false,
+    });
+
     console.log(e);
     console.log('_onError');
   }
 
+  static _replay(){
+    this.refs.videoPlayer.seek(20);  //视频重新播放
+  }
 
   render() {
     let data = this.state.data;
-    console.log('data', data);
+    // console.log('data', data);
     // console.log('row####', row);
     // console.log('this.props', this.props);
     return (
@@ -101,17 +118,37 @@ export default class Details extends Component {
                 onProgress={Details._onProgress.bind(this)} //视频在播放中，每隔 250ms 调用该函数，会带上当前已播放时间作为参数
                 onEnd={Details._onEnd.bind(this)} //播放结束
                 onError={Details._onError.bind(this)} //视频出错
-
-                //加载中组件
-
             />
-            {!this.state.videoReady && <ActivityIndicator size='large' color='#ee735c' style={styles.onLoading}/>}
-          </View>
-          <View style={styles.progressBox}>
-            <View style={[styles.progressBar, {width: screenWidth * this.state.videoProgress}]}>
 
-            </View>
+            {
+              /*视频出错提示*/
+              !this.state.videoOK && <Text style={styles.videoFail}>视频出错了，非常抱歉</Text>
+            }
+
+            {
+              /*视频加载 loading 图标*/
+              !this.state.videoReady && <ActivityIndicator size='large' color='#ee735c' style={styles.onLoading}/>
+            }
+
+            {
+              /*视频重新播放*/
+              this.state.videoReady && this.state.playing ?
+                  <Icon
+                      name='ios-play'
+                      style={styles.replay}
+                      size={40}
+                      onPress={Details._replay.bind(this)}
+                  /> : null
+            }
+
+            {
+              /*视频进度条*/
+              <View style={styles.progressBox}>
+                <View style={[styles.progressBar, {width: screenWidth * this.state.videoProgress}]}/>
+              </View>
+            }
           </View>
+
         </View>
     );
   }
@@ -135,6 +172,15 @@ const styles = StyleSheet.create({
     height: 360,
     backgroundColor: '#000',
   },
+  videoFail: {
+    position: 'absolute',
+    color: '#ddd',
+    top: 230,
+    left: 0,
+    width: screenWidth,
+    textAlign: 'center',
+    backgroundColor: 'transparent',
+  },
   onLoading: {
     position: 'absolute',
     top: 180,
@@ -146,11 +192,25 @@ const styles = StyleSheet.create({
   progressBox: {
     width: screenWidth,
     height: 3,
-    backgroundColor: '#ccc',
+    backgroundColor: '#333',
   },
   progressBar: {
+    width: 1,
     height: 3,
     backgroundColor: '#ee735c'
-  }
-
+  },
+  replay: {
+    position: 'absolute',
+    top: 150,
+    right: screenWidth / 2 - 30,
+    width: 60,
+    height: 60,
+    paddingTop: 10,
+    paddingLeft: 22,
+    backgroundColor: 'transparent',
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 30,
+    color: '#ed7b66',
+  },
 });
