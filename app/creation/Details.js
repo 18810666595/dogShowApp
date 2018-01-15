@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ListView,
   Image,
+  TextInput,
 } from 'react-native';
 
 import Video from 'react-native-video';
@@ -166,23 +167,23 @@ export default class Details extends Component {
       page: page,
     }).then(res => {
       // setTimeout(()=>{
-        this.setState({
-          isLoadingTail: false,
-        });
+      this.setState({
+        isLoadingTail: false,
+      });
 
-        if (res && res.success) {
-          let comments = res.comments;
-          let commentList = this.state.commentList.concat(comments);
-          if (comments && comments.length) {
-            console.log('comment', comments);
-            this.setState({
-              commentList: commentList,
-              dataSource: this.ds.cloneWithRows(commentList),
-              page: this.state.page + 1,
-              total: res.total
-            });
-          }
+      if (res && res.success) {
+        let comments = res.comments;
+        let commentList = this.state.commentList.concat(comments);
+        if (comments && comments.length) {
+          console.log('comment', comments);
+          this.setState({
+            commentList: commentList,
+            dataSource: this.ds.cloneWithRows(commentList),
+            page: this.state.page + 1,
+            total: res.total
+          });
         }
+      }
       // },5000);
 
     });
@@ -196,16 +197,37 @@ export default class Details extends Component {
     return commentCount < commentTotal;
   }
 
+  static _focus(){
+
+  }
+
   static _renderHeader() {
     let author = this.state.data.author;
     return (
-        <View style={styles.infoBox}>
-          <Image style={styles.authorImg} source={{uri: author.avatar}}/>
-          <View style={styles.descBox}>
-            <Text style={styles.authorName}>{author.name}</Text>
-            <Text style={styles.authorMsg} numberOfLines={2}>{author.message}</Text>
+        <View style={styles.listHeader}>
+          <View style={styles.infoBox}>
+            <Image style={styles.authorImg} source={{uri: author.avatar}}/>
+            <View style={styles.descBox}>
+              <Text style={styles.authorName}>{author.name}</Text>
+              <Text style={styles.authorMsg} numberOfLines={2}>{author.message}</Text>
+            </View>
+          </View>
+          <View style={styles.commentBox}>
+            <View style={styles.comment}>
+              <TextInput
+                  placeholder={'敢不敢评论一个'}
+                  style={styles.content}
+                  multiline={true}
+                  onFocus={Details._focus.bind(this)}
+              />
+
+            </View>
+            <View style={styles.commentArea}>
+              <Text style={styles.commentTitle}>精彩评论</Text>
+            </View>
           </View>
         </View>
+
     );
   }
 
@@ -537,4 +559,33 @@ const styles = StyleSheet.create({
     marginBottom: -30,
     paddingVertical: 10,
   },
+  listHeader: {
+    width: screenWidth,
+    // borderColor: 'red',
+    // borderWidth: 1,
+  },
+  commentBox: {
+    marginTop: 10,
+    marginBottom: 10,
+    padding: 8,
+    borderColor: '#ccc',
+    borderBottomWidth: 1,
+  },
+  content: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingLeft: 8,
+    color: '#333',
+    height: 40,
+    backgroundColor: '#fff',
+    fontSize: 14,
+    borderRadius: 4,
+  },
+  commentArea: {
+    // width: screenWidth,
+    // paddingBottom: 6,
+    // borderBottomWidth: 1,
+    marginTop: 10,
+    // borderColor: '#333',
+  }
 });
