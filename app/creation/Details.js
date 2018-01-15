@@ -10,12 +10,15 @@ import {
   Image,
   TextInput,
   Modal,
+  AlertIOS,
 } from 'react-native';
 
+import Button from 'react-native-button';
 import Video from 'react-native-video';
 import Icon from 'react-native-vector-icons/Ionicons';
 import request from "../common/request";
 import url from '../common/url';
+
 
 const screenWidth = Dimensions.get('window').width; //获取屏幕的宽度
 // console.log('Video', Video);
@@ -56,7 +59,8 @@ export default class Details extends Component {
       // modal
       modalVisiable: false,
       animationType: 'none',
-
+      content: '',
+      isSending: false,
     };
   }
 
@@ -207,10 +211,6 @@ export default class Details extends Component {
     Details._setModalVisiable.call(this, true);
   }
 
-  static _blur() {
-    //
-  }
-
   static _renderHeader() {
     let author = this.state.data.author;
     return (
@@ -290,8 +290,57 @@ export default class Details extends Component {
     });
   }
 
+  static _submit() {
+    if (!this.state.content) {
+      AlertIOS.alert('评论不能为空');
+      return;
+    }
+
+    if (this.state.isSending) {
+      AlertIOS.alert('正在评论中');
+      return;
+    }
+
+    this.setState({
+      isSending: true,
+    }, () => {
+      let body = {
+        accessToken: '1234',
+        id: this.state.data._id,
+        content: this.state.content
+      };
+      request.post(url.submitComment, body).then(res => {
+        if (res && res.success) {
+          // console.log('%%%', res);
+          // console.log('###', this.state.commentList);
+          let myComment = res.comment;
+          let item = {
+            _id: myComment.id,
+            replyName: myComment.replyName,
+            replyAvatar: myComment.replyAvatar,
+            replyMsg: this.state.content,
+          };
+          let newCommentList = [item].concat(this.state.commentList);
+          this.setState({
+            isSending: false,
+            commentList: newCommentList,
+            dataSource: this.ds.cloneWithRows(newCommentList),
+            modalVisiable: false,
+            content: ''
+          });
+        }
+      }).catch(error => {
+        console.log(error);
+        this.setState({
+          isSending: false
+        });
+        AlertIOS.alert('评论失败，稍后再试');
+      });
+    });
+  }
+
   componentDidMount() {
-    console.log('hear');
+    // console.log('hear');
     // console.log(this.state.data);
     let page = this.state.page;
     Details.fetchComment.call(this, page);
@@ -420,6 +469,12 @@ export default class Details extends Component {
 
                 </View>
               </View>
+              <Button
+                  style={styles.submitBtn}
+                  onPress={Details._submit.bind(this)}
+              >
+                评论
+              </Button>
             </View>
 
           </Modal>
@@ -624,9 +679,10 @@ const styles = StyleSheet.create({
   commentBox: {
     // marginTop: 10,
     // marginBottom: 10,
-    padding: 8,
+    width: screenWidth,
+    padding: 10,
     // borderWidth: 1,
-    // borderColor: 'red',
+    // borderColor: 'blue',
   },
   content: {
     borderWidth: 1,
@@ -647,12 +703,12 @@ const styles = StyleSheet.create({
     // borderColor: '#333',
   },
   modalContainer: {
-    // borderWidth: 1,
+    // borderWidth: 3,
     // borderColor: 'red',
     flex: 1,
     paddingTop: 45,
     backgroundColor: '#F5FCFF',
-    height: 800,
+    alignItems: 'center',
   },
   closeIcon: {
     alignSelf: 'center',
@@ -660,6 +716,7 @@ const styles = StyleSheet.create({
     color: '#ee753c',
   },
   contentInModal: {
+    // width: screenWidth,
     borderWidth: 1,
     borderColor: '#ddd',
     paddingLeft: 8,
@@ -668,6 +725,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     fontSize: 14,
     borderRadius: 4,
-  }
+  },
+  submitBtn: {
+    width: screenWidth - 20,
+    padding: 16,
+    marginVertical: 20,
+    // marginHorizontal: 20,
+    borderWidth: 1,
+    borderColor: '#ee735c',
+    borderRadius: 4,
+    color: '#ee735c',
+    fontSize: 18,
+  },
 
 });
