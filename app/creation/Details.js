@@ -414,8 +414,6 @@ export default class Details extends Component {
                       placeholder={'敢不敢评论一个'}
                       style={styles.contentInModal}
                       multiline={true}
-                      onFocus={Details._focus.bind(this)}
-                      onBlur={Details._blur.bind(this)}
                       defaultValue={this.state.content}
                       onChangeText={Details._changeText.bind(this)}
                   />
