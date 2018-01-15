@@ -9,6 +9,7 @@ import {
   ListView,
   Image,
   TextInput,
+  Modal,
 } from 'react-native';
 
 import Video from 'react-native-video';
@@ -51,6 +52,11 @@ export default class Details extends Component {
       page: 0,
       total: 0,
       commentList: [],
+
+      // modal
+      modalVisiable: false,
+      animationType: 'none',
+
     };
   }
 
@@ -197,8 +203,12 @@ export default class Details extends Component {
     return commentCount < commentTotal;
   }
 
-  static _focus(){
+  static _focus() {
+    Details._setModalVisiable.call(this, true);
+  }
 
+  static _blur() {
+    //
   }
 
   static _renderHeader() {
@@ -219,12 +229,14 @@ export default class Details extends Component {
                   style={styles.content}
                   multiline={true}
                   onFocus={Details._focus.bind(this)}
+                  defaultValue={this.state.content}
+                  onChangeText={Details._changeText.bind(this)}
               />
 
             </View>
-            <View style={styles.commentArea}>
-              <Text style={styles.commentTitle}>精彩评论</Text>
-            </View>
+          </View>
+          <View style={styles.commentArea}>
+            <Text style={styles.commentTitle}>精彩评论</Text>
           </View>
         </View>
 
@@ -254,13 +266,28 @@ export default class Details extends Component {
     );
   }
 
-
   static _fetchMoreComment() {
     if (!Details._hasMore.call(this) || this.state.isLoadingTail) return;
 
     console.log('开始获取更多数据啦');
     let page = this.state.page;
     Details.fetchComment.call(this, page);
+  }
+
+  static _closeModal() {
+    Details._setModalVisiable.call(this, false);
+  }
+
+  static _setModalVisiable(isVisiable) {
+    this.setState({
+      modalVisiable: isVisiable
+    });
+  }
+
+  static _changeText(text) {
+    this.setState({
+      content: text,
+    });
   }
 
   componentDidMount() {
@@ -368,6 +395,36 @@ export default class Details extends Component {
               renderHeader={Details._renderHeader.bind(this)}
               showsVerticalScrollIndicator={false}
           />
+
+          <Modal
+              animationType={'slide'}
+              visible={this.state.modalVisiable}
+              onRequestClose={Details._setModalVisiable.bind(this, false)}
+          >
+            <View style={styles.modalContainer}>
+              <Icon
+                  style={styles.closeIcon}
+                  name={'ios-close-outline'}
+                  onPress={Details._closeModal.bind(this)}
+                  // size={30}
+              />
+              <View style={styles.commentBox}>
+                <View style={styles.comment}>
+                  <TextInput
+                      placeholder={'敢不敢评论一个'}
+                      style={styles.contentInModal}
+                      multiline={true}
+                      onFocus={Details._focus.bind(this)}
+                      onBlur={Details._blur.bind(this)}
+                      defaultValue={this.state.content}
+                      onChangeText={Details._changeText.bind(this)}
+                  />
+
+                </View>
+              </View>
+            </View>
+
+          </Modal>
 
 
         </View>
@@ -561,15 +618,17 @@ const styles = StyleSheet.create({
   },
   listHeader: {
     width: screenWidth,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
     // borderColor: 'red',
     // borderWidth: 1,
   },
   commentBox: {
-    marginTop: 10,
-    marginBottom: 10,
+    // marginTop: 10,
+    // marginBottom: 10,
     padding: 8,
-    borderColor: '#ccc',
-    borderBottomWidth: 1,
+    // borderWidth: 1,
+    // borderColor: 'red',
   },
   content: {
     borderWidth: 1,
@@ -585,7 +644,32 @@ const styles = StyleSheet.create({
     // width: screenWidth,
     // paddingBottom: 6,
     // borderBottomWidth: 1,
-    marginTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 10,
     // borderColor: '#333',
+  },
+  modalContainer: {
+    // borderWidth: 1,
+    // borderColor: 'red',
+    flex: 1,
+    paddingTop: 45,
+    backgroundColor: '#F5FCFF',
+    height: 800,
+  },
+  closeIcon: {
+    alignSelf: 'center',
+    fontSize: 30,
+    color: '#ee753c',
+  },
+  contentInModal: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingLeft: 8,
+    color: '#333',
+    height: 400,
+    backgroundColor: '#fff',
+    fontSize: 14,
+    borderRadius: 4,
   }
+
 });
