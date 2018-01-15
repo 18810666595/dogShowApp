@@ -6,10 +6,14 @@ import {
   Dimensions,
   ActivityIndicator,
   TouchableOpacity,
+  ListView,
+  Image,
 } from 'react-native';
 
 import Video from 'react-native-video';
 import Icon from 'react-native-vector-icons/Ionicons';
+import request from "../common/request";
+import url from '../common/url';
 
 const screenWidth = Dimensions.get('window').width; //获取屏幕的宽度
 // console.log('Video', Video);
@@ -18,12 +22,15 @@ export default class Details extends Component {
   constructor(props) {
     super(props);
     let params = this.props.params;
+    let ds = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2
+    });
+    this.ds = ds;
     this.state = {
+      isLoadingTail: false, //是否加载评论中
       data: params.data,
-      rate: 1,
-      muted: false,
-      resizeMode: 'contain',
-      repeat: false,
+
+      // video load
       videoReady: false,
       videoProgress: 0,
       videoTotal: 0,
@@ -31,6 +38,18 @@ export default class Details extends Component {
       videoOK: true,
       playing: false,
       paused: true,
+
+      // video player
+      rate: 1,
+      muted: false,
+      resizeMode: 'contain',
+      repeat: false,
+
+      // comments 列表
+      dataSource: ds.cloneWithRows([]),
+      page: 0,
+      total: 0,
+      commentList: [],
     };
   }
 
@@ -123,6 +142,112 @@ export default class Details extends Component {
     });
   }
 
+  static renderRow(row) {
+    return (
+        <View style={styles.replyBox} key={row._id}>
+          <Image style={styles.replyAvatar} source={{uri: row.replyAvatar}}/>
+          <View style={styles.reply}>
+            <Text style={styles.replyName}>{row.replyName}</Text>
+            <Text style={styles.replyMsg} numberOfLines={2}>{row.replyMsg}</Text>
+          </View>
+        </View>
+    );
+  }
+
+  static fetchComment(page) {
+    let _id = this.state.data._id;
+    this.setState({
+      isLoadingTail: true,
+    });
+
+    request.get(url.comment, {
+      id: _id,
+      accessToken: '123',
+      page: page,
+    }).then(res => {
+      // setTimeout(()=>{
+        this.setState({
+          isLoadingTail: false,
+        });
+
+        if (res && res.success) {
+          let comments = res.comments;
+          let commentList = this.state.commentList.concat(comments);
+          if (comments && comments.length) {
+            console.log('comment', comments);
+            this.setState({
+              commentList: commentList,
+              dataSource: this.ds.cloneWithRows(commentList),
+              page: this.state.page + 1,
+              total: res.total
+            });
+          }
+        }
+      // },5000);
+
+    });
+  }
+
+  static _hasMore() {
+    let commentCount = this.state.commentList.length;
+    let commentTotal = this.state.total;
+    // console.log('creationCount', creationCount);
+    // console.log('creationTotal', creationTotal);
+    return commentCount < commentTotal;
+  }
+
+  static _renderHeader() {
+    let author = this.state.data.author;
+    return (
+        <View style={styles.infoBox}>
+          <Image style={styles.authorImg} source={{uri: author.avatar}}/>
+          <View style={styles.descBox}>
+            <Text style={styles.authorName}>{author.name}</Text>
+            <Text style={styles.authorMsg} numberOfLines={2}>{author.message}</Text>
+          </View>
+        </View>
+    );
+  }
+
+  static _renderFooter() {
+    if (!Details._hasMore.call(this) && this.state.commentList.length) {
+      // 数据没有更多的时候
+      return (
+          <View style={styles.loadingFooter}>
+            <Text style={styles.loadingText}>
+              没有更多了
+            </Text>
+          </View>
+      );
+    }
+
+    if (!this.state.isLoadingTail) {
+      return (
+          <View style={styles.loadingMore}/>
+      );
+    }
+
+    return (
+        <ActivityIndicator style={styles.loadingFooter}/>
+    );
+  }
+
+
+  static _fetchMoreComment() {
+    if (!Details._hasMore.call(this) || this.state.isLoadingTail) return;
+
+    console.log('开始获取更多数据啦');
+    let page = this.state.page;
+    Details.fetchComment.call(this, page);
+  }
+
+  componentDidMount() {
+    console.log('hear');
+    // console.log(this.state.data);
+    let page = this.state.page;
+    Details.fetchComment.call(this, page);
+  }
+
   render() {
     let data = this.state.data;
     // console.log('data', data);
@@ -130,6 +255,8 @@ export default class Details extends Component {
     // console.log('this.props', this.props);
     return (
         <View style={styles.container}>
+
+          {/*视频头部区域*/}
           <View style={styles.header}>
             <TouchableOpacity style={styles.backBox} onPress={Details._back.bind(this)}>
               <Icon name={'ios-arrow-back'} size={18} style={styles.backIcon}/>
@@ -137,6 +264,8 @@ export default class Details extends Component {
             </TouchableOpacity>
             <Text style={styles.headerTitle} numberOfLines={1}>{data.title}</Text>
           </View>
+
+          {/*视频区域*/}
           <View style={styles.videoBox}>
             <Video
                 ref='videoPlayer'
@@ -205,6 +334,20 @@ export default class Details extends Component {
             }
           </View>
 
+          {/*评论区域*/}
+          <ListView
+              dataSource={this.state.dataSource}
+              renderRow={Details.renderRow.bind(this)}
+              enableEmptySections={true}
+              automaticallyAdjustContentInsets={false}
+              onEndReached={Details._fetchMoreComment.bind(this)}
+              onEndReachedThreshold={20}
+              renderFooter={Details._renderFooter.bind(this)}
+              renderHeader={Details._renderHeader.bind(this)}
+              showsVerticalScrollIndicator={false}
+          />
+
+
         </View>
     );
   }
@@ -227,7 +370,7 @@ const styles = StyleSheet.create({
     width: screenWidth,
     marginTop: 30,
     height: 40,
-    borderBottomWidth:1,
+    borderBottomWidth: 1,
     borderColor: 'rgba(0,0,0,0.1)',
   },
   backBox: {
@@ -256,18 +399,19 @@ const styles = StyleSheet.create({
   },
   videoBox: {
     width: screenWidth,
-    height: 360,
+    height: screenWidth * 0.56,
     backgroundColor: '#000',
+    marginBottom: 10,
   },
   video: {
     width: screenWidth,
-    height: 360,
+    height: screenWidth * 0.56,
     backgroundColor: '#000',
   },
   videoFail: {
     position: 'absolute',
     color: '#ddd',
-    top: 230,
+    top: 120,
     left: 0,
     width: screenWidth,
     textAlign: 'center',
@@ -275,7 +419,7 @@ const styles = StyleSheet.create({
   },
   onLoading: {
     position: 'absolute',
-    top: 180,
+    top: 60,
     left: 0,
     width: screenWidth,
     alignSelf: 'flex-end',
@@ -302,7 +446,7 @@ const styles = StyleSheet.create({
   },
   playIcon: {
     position: 'absolute',
-    top: 150,
+    top: 80,
     right: screenWidth / 2 - 30,
     width: 60,
     height: 60,
@@ -320,5 +464,77 @@ const styles = StyleSheet.create({
     height: 360,
     left: 0,
     top: 0,
-  }
+  },
+  infoBox: {
+    width: screenWidth,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    paddingHorizontal: 10,
+    // borderWidth: 1,
+    // borderColor: 'blue'
+  },
+  authorImg: {
+    width: 60,
+    height: 60,
+    marginRight: 10,
+    // marginLeft: 10,
+    borderRadius: 30,
+  },
+  descBox: {
+    flex: 1,
+    // borderWidth: 1,
+    // borderColor: 'green'
+  },
+  authorName: {
+    fontSize: 18,
+  },
+  authorMsg: {
+    marginTop: 8,
+    fontSize: 16,
+    color: '#666',
+  },
+  replyBox: {
+    width: screenWidth,
+    flexDirection: 'row',
+    // alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 10,
+    marginTop: 10,
+    // borderWidth: 1,
+    // borderColor: 'blue'
+  },
+  replyAvatar: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+    // marginLeft: 10,
+    borderRadius: 20,
+  },
+  reply: {
+    flex: 1,
+    // borderWidth: 1,
+    // borderColor: 'green'
+  },
+  replyName: {
+    fontSize: 14,
+  },
+  replyMsg: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#666',
+  },
+  loadingMore: {
+    marginTop: -30,
+    paddingVertical: 10,
+  },
+  loadingText: {
+    color: '#777',
+    textAlign: 'center',
+  },
+  loadingFooter: {
+    marginBottom: -30,
+    paddingVertical: 10,
+  },
 });

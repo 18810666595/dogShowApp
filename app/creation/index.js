@@ -19,6 +19,7 @@ import Details from './Details';
 import request from '../common/request';
 import url from '../common/url';
 
+
 // const screenWidth = Dimensions.get('window').width; //获取屏幕的宽度
 
 
@@ -270,5 +271,5 @@ const styles = StyleSheet.create({
   loadingFooter: {
     marginBottom: -30,
     paddingVertical: 10,
-  }
+  },
 });
