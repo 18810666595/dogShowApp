@@ -531,13 +531,13 @@ const styles = StyleSheet.create({
   },
   videoBox: {
     width: screenWidth,
-    height: screenWidth * 0.56,
+    height: screenWidth * 0.5625,
     backgroundColor: '#000',
     marginBottom: 10,
   },
   video: {
     width: screenWidth,
-    height: screenWidth * 0.56,
+    height: screenWidth * 0.5625,
     backgroundColor: '#000',
   },
   videoFail: {
