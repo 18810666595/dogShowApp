@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
   _pauseBtn: {
     position: 'absolute',
     width: screenWidth,
-    height: 360,
+    height: screenWidth * 0.5625,
     left: 0,
     top: 0,
   },
