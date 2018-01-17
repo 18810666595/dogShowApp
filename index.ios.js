@@ -16,72 +16,71 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import List from './app/creation';
 import Edit from './app/edit';
 import Account from './app/account';
+import Login from './app/account/login';
 
 export default class dogShowApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'list'
+      selectedTab: 'account'
     };
   }
 
   render() {
     return (
-        <TabBarIOS
-            tintColor="white"
-            barTintColor="darkslateblue">
-          <Icon.TabBarItem
-              iconName='ios-videocam-outline'
-              selectedIconName='ios-videocam'
-              selected={this.state.selectedTab === 'list'}
-              onPress={() => {
-                this.setState({
-                  selectedTab: 'list',
-                });
-              }}>
+      <TabBarIOS
+        tintColor="white"
+        barTintColor="darkslateblue">
+        <Icon.TabBarItem
+          iconName='ios-videocam-outline'
+          selectedIconName='ios-videocam'
+          selected={this.state.selectedTab === 'list'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'list',
+            });
+          }}>
 
-            {/*<List/>*/}
-
-            <Navigator
-                initialRoute={{
-                  name: 'list',
-                  component: List,
-                }}
-                configureScene={(/*route, routeStack*/) => {
-                  return Navigator.SceneConfigs.FloatFromRight;
-                }}
-                renderScene={(route, navigator) => {
-                  let Component = route.component;
-                  // console.log('route?????',route);
-                  // console.log(Component === List);
-                  // console.log('Component', Component);
-                  return <Component params={route.params} navigator={navigator}/>;
-                }}
-            />
-          </Icon.TabBarItem>
-          <Icon.TabBarItem
-              iconName='ios-recording-outline'
-              selectedIconName='ios-recording'
-              selected={this.state.selectedTab === 'edit'}
-              onPress={() => {
-                this.setState({
-                  selectedTab: 'edit',
-                });
-              }}>
-            <Edit/>
-          </Icon.TabBarItem>
-          <Icon.TabBarItem
-              iconName='ios-more-outline'
-              selectedIconName='ios-more'
-              selected={this.state.selectedTab === 'account'}
-              onPress={() => {
-                this.setState({
-                  selectedTab: 'account',
-                });
-              }}>
-            <Account/>
-          </Icon.TabBarItem>
-        </TabBarIOS>
+          <Navigator
+            initialRoute={{
+              name: 'list',
+              component: List,
+            }}
+            configureScene={(/*route, routeStack*/) => {
+              return Navigator.SceneConfigs.FloatFromRight;
+            }}
+            renderScene={(route, navigator) => {
+              let Component = route.component;
+              // console.log('route?????',route);
+              // console.log(Component === List);
+              // console.log('Component', Component);
+              return <Component params={route.params} navigator={navigator}/>;
+            }}
+          />
+        </Icon.TabBarItem>
+        <Icon.TabBarItem
+          iconName='ios-recording-outline'
+          selectedIconName='ios-recording'
+          selected={this.state.selectedTab === 'edit'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'edit',
+            });
+          }}>
+          <Edit/>
+        </Icon.TabBarItem>
+        <Icon.TabBarItem
+          iconName='ios-more-outline'
+          selectedIconName='ios-more'
+          selected={this.state.selectedTab === 'account'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'account',
+            });
+          }}>
+          <Login/>
+        </Icon.TabBarItem>
+      </TabBarIOS>
     );
   }
 }

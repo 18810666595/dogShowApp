@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -6,18 +6,18 @@ import {
 } from 'react-native';
 
 export default class Account extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
   }
 
-  render(){
-    return(
-        <View style={styles.container}>
-          <Text>
-            账户页面
-          </Text>
-        </View>
-    )
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>
+          账户页面
+        </Text>
+      </View>
+    );
   }
 }
 
