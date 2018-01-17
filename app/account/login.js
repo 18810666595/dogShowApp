@@ -27,10 +27,10 @@ export default class Login extends Component {
     });
   }
 
-  static _saveVerify(text){
+  static _saveVerify(text) {
     this.setState({
       verifyCode: text,
-    })
+    });
   }
 
   static _submit() {
