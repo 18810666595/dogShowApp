@@ -155,13 +155,13 @@ export default class Details extends Component {
 
   static renderRow(row) {
     return (
-        <View style={styles.replyBox} key={row._id}>
-          <Image style={styles.replyAvatar} source={{uri: row.replyAvatar}}/>
-          <View style={styles.reply}>
-            <Text style={styles.replyName}>{row.replyName}</Text>
-            <Text style={styles.replyMsg} numberOfLines={2}>{row.replyMsg}</Text>
-          </View>
+      <View style={styles.replyBox} key={row._id}>
+        <Image style={styles.replyAvatar} source={{uri: row.replyAvatar}}/>
+        <View style={styles.reply}>
+          <Text style={styles.replyName}>{row.replyName}</Text>
+          <Text style={styles.replyMsg} numberOfLines={2}>{row.replyMsg}</Text>
         </View>
+      </View>
     );
   }
 
@@ -214,31 +214,31 @@ export default class Details extends Component {
   static _renderHeader() {
     let author = this.state.data.author;
     return (
-        <View style={styles.listHeader}>
-          <View style={styles.infoBox}>
-            <Image style={styles.authorImg} source={{uri: author.avatar}}/>
-            <View style={styles.descBox}>
-              <Text style={styles.authorName}>{author.name}</Text>
-              <Text style={styles.authorMsg} numberOfLines={2}>{author.message}</Text>
-            </View>
-          </View>
-          <View style={styles.commentBox}>
-            <View style={styles.comment}>
-              <TextInput
-                  placeholder={'敢不敢评论一个'}
-                  style={styles.content}
-                  multiline={true}
-                  onFocus={Details._focus.bind(this)}
-                  defaultValue={this.state.content}
-                  onChangeText={Details._changeText.bind(this)}
-              />
-
-            </View>
-          </View>
-          <View style={styles.commentArea}>
-            <Text style={styles.commentTitle}>精彩评论</Text>
+      <View style={styles.listHeader}>
+        <View style={styles.infoBox}>
+          <Image style={styles.authorImg} source={{uri: author.avatar}}/>
+          <View style={styles.descBox}>
+            <Text style={styles.authorName}>{author.name}</Text>
+            <Text style={styles.authorMsg} numberOfLines={2}>{author.message}</Text>
           </View>
         </View>
+        <View style={styles.commentBox}>
+          <View style={styles.comment}>
+            <TextInput
+              placeholder={'敢不敢评论一个'}
+              style={styles.content}
+              multiline={true}
+              onFocus={Details._focus.bind(this)}
+              defaultValue={this.state.content}
+              onChangeText={Details._changeText.bind(this)}
+            />
+
+          </View>
+        </View>
+        <View style={styles.commentArea}>
+          <Text style={styles.commentTitle}>精彩评论</Text>
+        </View>
+      </View>
 
     );
   }
@@ -247,22 +247,22 @@ export default class Details extends Component {
     if (!Details._hasMore.call(this) && this.state.commentList.length) {
       // 数据没有更多的时候
       return (
-          <View style={styles.loadingFooter}>
-            <Text style={styles.loadingText}>
-              没有更多了
-            </Text>
-          </View>
+        <View style={styles.loadingFooter}>
+          <Text style={styles.loadingText}>
+            没有更多了
+          </Text>
+        </View>
       );
     }
 
     if (!this.state.isLoadingTail) {
       return (
-          <View style={styles.loadingMore}/>
+        <View style={styles.loadingMore}/>
       );
     }
 
     return (
-        <ActivityIndicator style={styles.loadingFooter}/>
+      <ActivityIndicator style={styles.loadingFooter}/>
     );
   }
 
@@ -352,135 +352,136 @@ export default class Details extends Component {
     // console.log('row####', row);
     // console.log('this.props', this.props);
     return (
-        <View style={styles.container}>
+      <View style={styles.container}>
 
-          {/*视频头部区域*/}
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.backBox} onPress={Details._back.bind(this)}>
-              <Icon name={'ios-arrow-back'} size={18} style={styles.backIcon}/>
-              <Text>返回</Text>
-            </TouchableOpacity>
-            <Text style={styles.headerTitle} numberOfLines={1}>{data.title}</Text>
-          </View>
+        {/*视频头部区域*/}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backBox} onPress={Details._back.bind(this)}>
+            <Icon name={'ios-arrow-back'} size={18} style={styles.backIcon}/>
+            <Text>返回</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle} numberOfLines={1}>{data.title}</Text>
+        </View>
 
-          {/*视频区域*/}
-          <View style={styles.videoBox}>
-            <Video
-                ref='videoPlayer'
-                source={{uri: data.video}}  //视频地址
-                style={styles.video}
-                volume={1}  //声音放大倍数
-                paused={this.state.paused}  //视频刚开始是否暂停
-                rate={this.state.rate}    //视频播放时候的速度
-                muted={this.state.muted}  //视频是否静音
-                resizeMode={this.state.resizeMode}  //视频的拉伸方式
-                repeat={this.state.repeat}
+        {/*视频区域*/}
+        <View style={styles.videoBox}>
+          <Video
+            ref='videoPlayer'
+            source={{uri: data.video}}  //视频地址
+            style={styles.video}
+            volume={1}  //声音放大倍数
+            paused={this.state.paused}  //视频刚开始是否暂停
+            rate={this.state.rate}    //视频播放时候的速度
+            muted={this.state.muted}  //视频是否静音
+            resizeMode={this.state.resizeMode}  //视频的拉伸方式
+            repeat={this.state.repeat}
 
-                //回调函数
-                onLoadStart={Details._onLoadStart.bind(this)} //视频开始加载
-                onLoad={Details._onLoad.bind(this)} //视频加载中
-                onProgress={Details._onProgress.bind(this)} //视频在播放中，每隔 250ms 调用该函数，会带上当前已播放时间作为参数
-                onEnd={Details._onEnd.bind(this)} //播放结束
-                onError={Details._onError.bind(this)} //视频出错
-            />
+            //回调函数
+            onLoadStart={Details._onLoadStart.bind(this)} //视频开始加载
+            onLoad={Details._onLoad.bind(this)} //视频加载中
+            onProgress={Details._onProgress.bind(this)} //视频在播放中，每隔 250ms 调用该函数，会带上当前已播放时间作为参数
+            onEnd={Details._onEnd.bind(this)} //播放结束
+            onError={Details._onError.bind(this)} //视频出错
+          />
 
-            {
-              /*视频出错提示*/
-              !this.state.videoOK && <Text style={styles.videoFail}>视频出错了，非常抱歉</Text>
-            }
+          {
+            /*视频出错提示*/
+            !this.state.videoOK && <Text style={styles.videoFail}>视频出错了，非常抱歉</Text>
+          }
 
-            {
-              /*视频加载 loading 图标*/
-              !this.state.videoReady && <ActivityIndicator size='large' color='#ee735c' style={styles.onLoading}/>
-            }
+          {
+            /*视频加载 loading 图标*/
+            !this.state.videoReady && <ActivityIndicator size='large' color='#ee735c' style={styles.onLoading}/>
+          }
 
-            {
-              /*视频暂停、播放功能*/
-              this.state.videoReady && this.state.playing ?
-                  <TouchableOpacity style={styles._pauseBtn} activeOpacity={1} onPress={Details._pause.bind(this)}>
-                    {
-                      this.state.paused ?
-                          <Icon
-                              name='ios-play'
-                              style={styles.playIcon}
-                              size={40}
-                              onPress={Details._resume.bind(this)}
-                          /> : null
-                    }
-                  </TouchableOpacity> : null
-            }
-
-            {
-              /*视频重新播放*/
-              this.state.videoReady && !this.state.playing ?
-                  <Icon
+          {
+            /*视频暂停、播放功能*/
+            this.state.videoReady && this.state.playing ?
+              <TouchableOpacity style={styles._pauseBtn} activeOpacity={1} onPress={Details._pause.bind(this)}>
+                {
+                  this.state.paused ?
+                    <Icon
                       name='ios-play'
                       style={styles.playIcon}
                       size={40}
-                      onPress={Details._replay.bind(this)}
-                  /> : null
-            }
+                      onPress={Details._resume.bind(this)}
+                    /> : null
+                }
+              </TouchableOpacity> : null
+          }
 
-            {
-              /*视频进度条*/
-              <View style={styles.progressBox}>
-                <View style={[styles.progressBar, {width: screenWidth * this.state.videoProgress}]}/>
-                <TouchableOpacity ref='jumpBar' style={styles.jumpBar} onPress={Details._jumpTo.bind(this)}>
+          {
+            /*视频重新播放*/
+            this.state.videoReady && !this.state.playing ?
+              <Icon
+                name='ios-play'
+                style={styles.playIcon}
+                size={40}
+                onPress={Details._replay.bind(this)}
+              /> : null
+          }
 
-                </TouchableOpacity>
+          {
+            /*视频进度条*/
+            <View style={styles.progressBox}>
+              <View style={[styles.progressBar, {width: screenWidth * this.state.videoProgress}]}/>
+              <TouchableOpacity ref='jumpBar' style={styles.jumpBar} onPress={Details._jumpTo.bind(this)}>
+
+              </TouchableOpacity>
+            </View>
+          }
+        </View>
+
+        {/*评论区域*/}
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={Details.renderRow.bind(this)}
+          enableEmptySections={true}
+          automaticallyAdjustContentInsets={false}
+          onEndReached={Details._fetchMoreComment.bind(this)}
+          onEndReachedThreshold={20}
+          renderFooter={Details._renderFooter.bind(this)}
+          renderHeader={Details._renderHeader.bind(this)}
+          showsVerticalScrollIndicator={false}
+        />
+
+        <Modal
+          animationType={'slide'}
+          visible={this.state.modalVisiable}
+          onRequestClose={Details._setModalVisiable.bind(this, false)}
+        >
+          <View style={styles.modalContainer}>
+            <Icon
+              style={styles.closeIcon}
+              name={'ios-close-outline'}
+              onPress={Details._closeModal.bind(this)}
+              // size={30}
+            />
+            <View style={styles.commentBox}>
+              <View style={styles.comment}>
+                <TextInput
+                  placeholder={'敢不敢评论一个'}
+                  style={styles.contentInModal}
+                  multiline={true}
+                  defaultValue={this.state.content}
+                  onChangeText={Details._changeText.bind(this)}
+                  autoFocus={true}
+                />
+
               </View>
-            }
+            </View>
+            <Button
+              style={styles.submitBtn}
+              onPress={Details._submit.bind(this)}
+            >
+              评论
+            </Button>
           </View>
 
-          {/*评论区域*/}
-          <ListView
-              dataSource={this.state.dataSource}
-              renderRow={Details.renderRow.bind(this)}
-              enableEmptySections={true}
-              automaticallyAdjustContentInsets={false}
-              onEndReached={Details._fetchMoreComment.bind(this)}
-              onEndReachedThreshold={20}
-              renderFooter={Details._renderFooter.bind(this)}
-              renderHeader={Details._renderHeader.bind(this)}
-              showsVerticalScrollIndicator={false}
-          />
-
-          <Modal
-              animationType={'slide'}
-              visible={this.state.modalVisiable}
-              onRequestClose={Details._setModalVisiable.bind(this, false)}
-          >
-            <View style={styles.modalContainer}>
-              <Icon
-                  style={styles.closeIcon}
-                  name={'ios-close-outline'}
-                  onPress={Details._closeModal.bind(this)}
-                  // size={30}
-              />
-              <View style={styles.commentBox}>
-                <View style={styles.comment}>
-                  <TextInput
-                      placeholder={'敢不敢评论一个'}
-                      style={styles.contentInModal}
-                      multiline={true}
-                      defaultValue={this.state.content}
-                      onChangeText={Details._changeText.bind(this)}
-                  />
-
-                </View>
-              </View>
-              <Button
-                  style={styles.submitBtn}
-                  onPress={Details._submit.bind(this)}
-              >
-                评论
-              </Button>
-            </View>
-
-          </Modal>
+        </Modal>
 
 
-        </View>
+      </View>
     );
   }
 }
