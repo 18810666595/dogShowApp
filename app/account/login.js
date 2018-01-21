@@ -11,7 +11,7 @@ import Button from 'react-native-button';
 import request from '../common/request';
 import url from '../common/url';
 
-let {CountDownText} = require('react-native-sk-countdown');
+let {CountDownText} = require('react-native-sk-countdown'); //倒计时模块
 
 export default class Login extends Component {
   constructor(props) {
@@ -161,7 +161,6 @@ export default class Login extends Component {
                 }
 
               </View> : null
-
           }
 
           {
