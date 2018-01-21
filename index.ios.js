@@ -9,6 +9,7 @@ import {
   AppRegistry,
   TabBarIOS,
   Navigator,
+  AsyncStorage,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -22,11 +23,41 @@ export default class dogShowApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'account'
+      selectedTab: 'account',
+      lsLogin: false,
+      user: null,
     };
   }
 
+  componentDidMount() {
+    dogShowApp._asyncAppStatus.call(this);
+  }
+
+  static _asyncAppStatus() {
+    AsyncStorage.getItem('user').then(data => {
+      let newState = {};
+      if (data) {
+        let user = JSON.parse(data);
+        if (user && user.accessToken) {
+          newState.user = user;
+          newState.isLogin = true;
+        } else {
+          newState.isLogin = false;
+          newState.user = null;
+        }
+        this.setState(newState);
+      }
+    });
+  }
+
   render() {
+
+    if(!this.state.isLogin){
+      return (
+        <Login/>
+      )
+    }
+
     return (
       <TabBarIOS
         tintColor="white"
@@ -78,7 +109,7 @@ export default class dogShowApp extends Component {
               selectedTab: 'account',
             });
           }}>
-          <Login/>
+          <Account/>
         </Icon.TabBarItem>
       </TabBarIOS>
     );
