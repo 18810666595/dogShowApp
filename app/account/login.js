@@ -52,9 +52,10 @@ export default class Login extends Component {
     };
     request.post(url.verify, body).then(res => {
       if (res && res.success) {
+        /*登录成功*/
         console.log('login ok');
         console.log(res);
-
+        this.props.afterLogin.call(this, res.data);
       } else {
         AlertIOS.alert('获取验证码失败，请检查手机号');
       }

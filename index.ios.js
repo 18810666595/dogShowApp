@@ -35,27 +35,37 @@ export default class dogShowApp extends Component {
 
   static _asyncAppStatus() {
     AsyncStorage.getItem('user').then(data => {
-        let newState = {};
-        if (data) {
-          let user = JSON.parse(data);
-          if (user && user.accessToken) {
-            newState.user = user;
-            newState.isLogin = true;
-          } else {
-            newState.isLogin = false;
-            newState.user = null;
-          }
-          this.setState(newState);
+      let newState = {};
+      if (data) {
+        let user = JSON.parse(data);
+        if (user && user.accessToken) {
+          newState.user = null;
+          newState.isLogin = true;
+        } else {
+          newState.isLogin = false;
+          newState.user = null;
         }
+        this.setState(newState);
+      }
+    });
+  }
+
+  static _afterLogin(user) {
+    let userStr = JSON.stringify(user);
+    AsyncStorage.setItem('user', userStr).then(res => {
+      console.log('res', res);
+      this.setState({
+        user,
+        isLogin: true,
       });
+    });
   }
 
   render() {
-
-    if(!this.state.isLogin){
+    if (!this.state.isLogin) {
       return (
-        <Login/>
-      )
+        <Login afterLogin={dogShowApp._afterLogin.bind(this)}/>
+      );
     }
 
     return (
