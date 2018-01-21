@@ -23,7 +23,7 @@ export default class dogShowApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'account',
+      selectedTab: 'list',
       lsLogin: false,
       user: null,
     };
@@ -35,19 +35,19 @@ export default class dogShowApp extends Component {
 
   static _asyncAppStatus() {
     AsyncStorage.getItem('user').then(data => {
-      let newState = {};
-      if (data) {
-        let user = JSON.parse(data);
-        if (user && user.accessToken) {
-          newState.user = user;
-          newState.isLogin = true;
-        } else {
-          newState.isLogin = false;
-          newState.user = null;
+        let newState = {};
+        if (data) {
+          let user = JSON.parse(data);
+          if (user && user.accessToken) {
+            newState.user = user;
+            newState.isLogin = true;
+          } else {
+            newState.isLogin = false;
+            newState.user = null;
+          }
+          this.setState(newState);
         }
-        this.setState(newState);
-      }
-    });
+      });
   }
 
   render() {
@@ -77,14 +77,11 @@ export default class dogShowApp extends Component {
               name: 'list',
               component: List,
             }}
-            configureScene={(/*route, routeStack*/) => {
+            configureScene={(route, routeStack) => {
               return Navigator.SceneConfigs.FloatFromRight;
             }}
             renderScene={(route, navigator) => {
               let Component = route.component;
-              // console.log('route?????',route);
-              // console.log(Component === List);
-              // console.log('Component', Component);
               return <Component params={route.params} navigator={navigator}/>;
             }}
           />
