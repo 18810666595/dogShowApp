@@ -52,8 +52,7 @@ export default class dogShowApp extends Component {
 
   static _afterLogin(user) {
     let userStr = JSON.stringify(user);
-    AsyncStorage.setItem('user', userStr).then(res => {
-      console.log('res', res);
+    AsyncStorage.setItem('user', userStr).then(() => {
       this.setState({
         user,
         isLogin: true,
