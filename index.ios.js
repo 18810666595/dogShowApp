@@ -23,7 +23,7 @@ export default class dogShowApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'list',
+      selectedTab: 'account',
       lsLogin: false,
       user: null,
     };
