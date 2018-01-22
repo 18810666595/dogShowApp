@@ -7,12 +7,33 @@ import {
   Dimensions,
   Image,
   AsyncStorage,
+  AlertIOS,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const screenWidth = Dimensions.get('window').width;
 import ImagePicker from 'react-native-image-picker';
+import request from '../common/request';
+import url from '../common/url';
+import sha1 from 'sha1';
+import axios from 'axios';
+
+
+const CLOUDINARY = {
+  cloud_name: 'chengong',
+  api_key: '762542723573819',
+  api_secret: 'N0UgAw9s2mklHayQCm4UxrHzoeQ',
+  base: 'http://res.cloudinary.com/chengong',
+  image: 'https://api.cloudinary.com/v1_1/chengong/image/upload',
+  video: 'https://api.cloudinary.com/v1_1/chengong/video/upload',
+  audio: 'https://api.cloudinary.com/v1_1/chengong/raw/upload',
+
+};
+
+// function avatar(id, type) {
+//   return `${CLOUDINARY.base}/${type}/upload/${id}`;
+// }
 
 export default class Account extends Component {
   constructor(props) {
@@ -39,6 +60,7 @@ export default class Account extends Component {
   }
 
   static _pickPhoto() {
+    /*ImagePicker 的配置 options*/
     let options = {
       title: '选择头像',
       cancelButtonTitle: '取消',
@@ -67,16 +89,112 @@ export default class Account extends Component {
         // You can display the image using either data...
         const source = {uri: 'data:image/png;base64,' + response.data, isStatic: true};
         console.log('source', source);
-        let user = this.state.user;
-        user.avatar = source.uri; //source 是一个对象
-        AsyncStorage.setItem('user', JSON.stringify(user)).then(()=>{
-          this.setState({
-            user: user
-          })
-        })
+        // let user = this.state.user;
+        // user.avatar = source.uri; //source 是一个对象
+        // AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
+        //   this.setState({
+        //     user: user
+        //   });
+        // });
+
+        /*构造 cloudinary 所需params*/
+        let timestamp = Date.now();
+        let tags = 'app,avatar';
+        let folder = 'avatar';
+        let {accessToken,} = this.state.user;
+
+        /*向自己的服务器发送请求*/
+        request.post(url.signatureURL, {
+          accessToken,
+          timestamp,
+          type: 'avatar',
+          folder,
+          tags,
+        }).then(res => {
+          if (res && res.success) {
+            /*下面是本地伪造签名，之后会在服务器端生成签名，这是为了先跑通流程*/
+            let signatureStr = `folder=${folder}&tags=${tags}&timestamp=${timestamp}${CLOUDINARY.api_secret}`;
+            let signature = sha1(signatureStr);
+
+            /*构建 post 到 cloudinary 的 form 数据 */
+            let body = new FormData();
+            body.append('folder', folder);
+            body.append('signature', signature);
+            body.append('tags', tags);
+            body.append('api_key', CLOUDINARY.api_key);
+            body.append('resource', 'image');
+            body.append('file', source.uri);
+            body.append('timestamp', timestamp);
+
+            Account._upload.call(this, body);
+          }
+        }).catch(err=>{
+          console.log(err);
+        });
       }
     });
   }
+
+  /**
+   * 使用 axios 上传数据到 cloudinary
+   * @param body
+   * @private
+   */
+  static _upload(body) {
+    console.log('body', body);
+    axios.post(CLOUDINARY.image, body)
+      .then(res => {
+        console.log('res', res);
+        if (res && res.data.public_id) {
+          let user = this.state.user;
+          // user.avatar = avatar(res.data.public_id, 'image');
+          user.avatar = res.data.secure_url;
+          console.log('user.avatar', user.avatar);
+          this.setState({
+            user,
+          });
+        }
+      })
+      .catch(err => {
+        AlertIOS.alert('请求失败');
+        console.log(err);
+      });
+  }
+
+  ///*使用 xhr 上传数据到 cloudinary*/
+  // static _upload(body) {
+  //   let xhr = new XMLHttpRequest();
+  //   let url = CLOUDINARY.image;
+  //   xhr.open('POST', url);
+  //   xhr.send(body);
+  //   xhr.onload = () => {
+  //     if (xhr.status !== 200) {
+  //       AlertIOS.alert('请求失败');
+  //       console.log(xhr.responseText);
+  //       return;
+  //     }
+  //     if (!xhr.responseText) {
+  //       AlertIOS.alert('请求失败');
+  //       return;
+  //     }
+  //     let response;
+  //     try {
+  //       response = JSON.parse(xhr.responseText);
+  //     } catch (e) {
+  //       console.log(e);
+  //       console.log('parse fails');
+  //     }
+  //
+  //     if (response && response.public_id) {
+  //       let user = this.state.user;
+  //       user.avatar = avatar(response.public_id, 'image');
+  //       this.setState({
+  //         user,
+  //       });
+  //     }
+  //   };
+  // }
+
 
   render() {
     let user = this.state.user;

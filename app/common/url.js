@@ -9,5 +9,6 @@ export default {
   submitComment: 'http://rap2api.taobao.org/app/mock/3605/POST/submitcomment',
   signup: 'http://rap2api.taobao.org/app/mock/3605/POST/api/u/signup',
   verify: 'http://rap2api.taobao.org/app/mock/3605/POST/api/u/verify',
+  signatureURL: 'http://rap2api.taobao.org/app/mock/3605/POST/api/signature',
 };
 
