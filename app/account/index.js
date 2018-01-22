@@ -102,7 +102,7 @@ export default class Account extends Component {
             :
             <View style={styles.avatarContainer}>
               <Text style={styles.avatarTip}>添加头像</Text>
-              <TouchableOpacity style={styles.avatarBox}>
+              <TouchableOpacity onPress={Account._pickPhoto.bind(this)} style={styles.avatarBox}>
                 <Icon style={styles.uploadIcon} name={'ios-cloud-upload-outline'} size={32}/>
               </TouchableOpacity>
             </View>
