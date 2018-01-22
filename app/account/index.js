@@ -53,7 +53,6 @@ export default class Account extends Component {
       }
     };
 
-
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
 
