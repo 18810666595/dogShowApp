@@ -12,6 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const screenWidth = Dimensions.get('window').width;
+import ImagePicker from 'react-native-image-picker';
 
 export default class Account extends Component {
   constructor(props) {
@@ -25,7 +26,7 @@ export default class Account extends Component {
   componentDidMount() {
     console.log('componentDidMount');
     AsyncStorage.getItem('user').then(data => {
-      console.log('data', data);
+      // console.log('data', data);
       if (data) {
         let user = JSON.parse(data);
         if (user && user.accessToken) {
@@ -33,6 +34,47 @@ export default class Account extends Component {
             user,
           });
         }
+      }
+    });
+  }
+
+  static _pickPhoto() {
+    let options = {
+      title: '选择头像',
+      cancelButtonTitle: '取消',
+      takePhotoButtonTitle: '拍照',
+      chooseFromLibraryButtonTitle: '选择相册',
+      allowsEditing: true,
+      quality: 0.75,
+      noData: false,
+      storageOptions: {
+        skipBackup: true,
+        path: 'images'
+      }
+    };
+
+
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      }
+      else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      }
+
+      else {
+        // You can display the image using either data...
+        const source = {uri: 'data:image/png;base64,' + response.data, isStatic: true};
+        console.log('source', source);
+        let user = this.state.user;
+        user.avatar = source.uri; //source 是一个对象
+        AsyncStorage.setItem('user', JSON.stringify(user)).then(()=>{
+          this.setState({
+            user: user
+          })
+        })
       }
     });
   }
@@ -49,7 +91,7 @@ export default class Account extends Component {
         {
           user.avatar
             ?
-            <TouchableOpacity style={styles.avatarContainer}>
+            <TouchableOpacity onPress={Account._pickPhoto.bind(this)} style={styles.avatarContainer}>
               <Image source={{uri: user.avatar}} style={styles.avatarContainer}>
                 <View style={styles.avatarBox}>
                   <Image source={{uri: user.avatar}} style={styles.avatar}/>
