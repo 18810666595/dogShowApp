@@ -31,6 +31,8 @@
 		67AF2B42A1874A23B35620AB /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 569ECE900669445BBAA478B7 /* Entypo.ttf */; };
 		7B4837BC200A56D5004DCE85 /* react-native-video in Resources */ = {isa = PBXBuildFile; fileRef = 7B4837BB200A56D5004DCE85 /* react-native-video */; };
 		7B63B3ED2015877F00408208 /* ios in Resources */ = {isa = PBXBuildFile; fileRef = 7B63B3EC2015877F00408208 /* ios */; };
+		7B63B3EF20173A9800408208 /* react-native-progress in Resources */ = {isa = PBXBuildFile; fileRef = 7B63B3EE20173A9700408208 /* react-native-progress */; };
+		7B63B3F720173C2200408208 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B63B3F520173BD800408208 /* libART.a */; };
 		7BDD37762005DCDD00BE8584 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 7BDD37752005DCDD00BE8584 /* Fonts */; };
 		7CF938601D45465B8E2138F7 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5752A51F979749739212F466 /* EvilIcons.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -123,6 +125,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 014A3B5C1C6CF33500B6D375;
 			remoteInfo = RNImagePicker;
+		};
+		7B63B3F420173BD800408208 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7B63B3F020173BD800408208 /* ART.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
+			remoteInfo = ART;
 		};
 		7BDD37552005DBC700BE8584 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -220,6 +229,8 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7B4837BB200A56D5004DCE85 /* react-native-video */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "react-native-video"; path = "../node_modules/react-native-video"; sourceTree = "<group>"; };
 		7B63B3EC2015877F00408208 /* ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ios; path = "../node_modules/react-native-image-picker/ios"; sourceTree = "<group>"; };
+		7B63B3EE20173A9700408208 /* react-native-progress */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "react-native-progress"; path = "../node_modules/react-native-progress"; sourceTree = "<group>"; };
+		7B63B3F020173BD800408208 /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		7BDD37752005DCDD00BE8584 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		8EB8492F539E4CE59352DC79 /* libRNImagePicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImagePicker.a; sourceTree = "<group>"; };
@@ -243,6 +254,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B63B3F720173C2200408208 /* libART.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
@@ -402,6 +414,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7B63B3F120173BD800408208 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7B63B3F520173BD800408208 /* libART.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7B63B3F620173C2200408208 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7BDD37502005DBC200BE8584 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -423,6 +450,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				7B63B3F020173BD800408208 /* ART.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
 				00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */,
@@ -452,6 +480,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				7B63B3EE20173A9700408208 /* react-native-progress */,
 				7B63B3EC2015877F00408208 /* ios */,
 				7B4837BB200A56D5004DCE85 /* react-native-video */,
 				7BDD37752005DCDD00BE8584 /* Fonts */,
@@ -461,6 +490,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				0238177052294370AB408FEE /* Resources */,
 				7BDD37502005DBC200BE8584 /* Recovered References */,
+				7B63B3F620173C2200408208 /* Frameworks */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -545,6 +575,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 7B63B3F120173BD800408208 /* Products */;
+					ProjectRef = 7B63B3F020173BD800408208 /* ART.xcodeproj */;
+				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
@@ -684,6 +718,13 @@
 			remoteRef = 7B63B3EA2015828B00408208 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		7B63B3F520173BD800408208 /* libART.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libART.a;
+			remoteRef = 7B63B3F420173BD800408208 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		7BDD37562005DBC700BE8584 /* libRCTImage-tvOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -769,6 +810,7 @@
 				7CF938601D45465B8E2138F7 /* EvilIcons.ttf in Resources */,
 				47A8CD5A629C47728B8379A6 /* FontAwesome.ttf in Resources */,
 				48899139FA5C4D818682446C /* Foundation.ttf in Resources */,
+				7B63B3EF20173A9800408208 /* react-native-progress in Resources */,
 				9FB230BE892141269A5EE9FC /* Ionicons.ttf in Resources */,
 				D39DFD681CD44FB7AC16B6C2 /* MaterialIcons.ttf in Resources */,
 				7B4837BC200A56D5004DCE85 /* react-native-video in Resources */,

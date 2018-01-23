@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as Progress from 'react-native-progress';
+
 
 const screenWidth = Dimensions.get('window').width;
 import ImagePicker from 'react-native-image-picker';
@@ -41,6 +43,8 @@ export default class Account extends Component {
     let user = this.props.user || {};
     this.state = {
       user,
+      avatarProgress: 0,
+      avatarUploading: false,
     };
   }
 
@@ -50,6 +54,7 @@ export default class Account extends Component {
       // console.log('data', data);
       if (data) {
         let user = JSON.parse(data);
+        user.avatar = '';
         if (user && user.accessToken) {
           this.setState({
             user,
@@ -128,7 +133,7 @@ export default class Account extends Component {
 
             Account._upload.call(this, body);
           }
-        }).catch(err=>{
+        }).catch(err => {
           console.log(err);
         });
       }
@@ -141,8 +146,26 @@ export default class Account extends Component {
    * @private
    */
   static _upload(body) {
+    let that = this;
     console.log('body', body);
-    axios.post(CLOUDINARY.image, body)
+    this.setState({
+      avatarProgress: 0,
+      avatarUploading: true,
+    });
+
+    axios.post(CLOUDINARY.image, body, {
+      onUploadProgress(progressEvent) {
+        // console.log('progressEvent', progressEvent);
+        if (progressEvent.lengthComputable) {
+          let {loaded, total} = progressEvent;
+          let percent = Number((loaded / total).toFixed(2));
+          console.log('percent', percent);
+          that.setState({
+            avatarProgress: percent,
+          });
+        }
+      }
+    })
       .then(res => {
         console.log('res', res);
         if (res && res.data.public_id) {
@@ -152,6 +175,8 @@ export default class Account extends Component {
           console.log('user.avatar', user.avatar);
           this.setState({
             user,
+            avatarUploading: false,
+            avatarProgress: 0,
           });
         }
       })
@@ -211,7 +236,11 @@ export default class Account extends Component {
             <TouchableOpacity onPress={Account._pickPhoto.bind(this)} style={styles.avatarContainer}>
               <Image source={{uri: user.avatar}} style={styles.avatarContainer}>
                 <View style={styles.avatarBox}>
-                  <Image source={{uri: user.avatar}} style={styles.avatar}/>
+                  {
+                    this.state.avatarUploading
+                      ? <Progress.Circle size={70} showsText={true} color={'#ee735c'} progress={this.state.avatarProgress}/>
+                      : <Image source={{uri: user.avatar}} style={styles.avatar}/>
+                  }
                 </View>
                 <Text style={styles.avatarTip}>更换头像</Text>
               </Image>
@@ -220,7 +249,12 @@ export default class Account extends Component {
             <View style={styles.avatarContainer}>
               <Text style={styles.avatarTip}>添加头像</Text>
               <TouchableOpacity onPress={Account._pickPhoto.bind(this)} style={styles.avatarBox}>
-                <Icon style={styles.uploadIcon} name={'ios-cloud-upload-outline'} size={32}/>
+                {
+                  this.state.avatarUploading
+                    ? <Progress.Circle size={70} showsText={true} color={'#ee735c'} progress={this.state.avatarProgress}/>
+                    : <Icon style={styles.uploadIcon} name={'ios-cloud-upload-outline'} size={32}/>
+                }
+
               </TouchableOpacity>
             </View>
         }
