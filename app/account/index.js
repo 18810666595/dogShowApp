@@ -54,7 +54,7 @@ export default class Account extends Component {
       // console.log('data', data);
       if (data) {
         let user = JSON.parse(data);
-        user.avatar = '';
+        // user.avatar = '';
         if (user && user.accessToken) {
           this.setState({
             user,
@@ -165,25 +165,48 @@ export default class Account extends Component {
           });
         }
       }
-    })
-      .then(res => {
-        console.log('res', res);
-        if (res && res.data.public_id) {
-          let user = this.state.user;
-          // user.avatar = avatar(res.data.public_id, 'image');
-          user.avatar = res.data.secure_url;
-          console.log('user.avatar', user.avatar);
+    }).then(res => {
+      console.log('res', res);
+      if (res && res.data.public_id) {
+        let user = this.state.user;
+        // user.avatar = avatar(res.data.public_id, 'image');
+        user.avatar = res.data.secure_url;
+        console.log('user.avatar', user.avatar);
+        this.setState({
+          user,
+          avatarUploading: false,
+          avatarProgress: 0,
+        });
+        Account._asyncUser.call(this, user);
+      }
+    }).catch(err => {
+      AlertIOS.alert('请求失败');
+      console.log(err);
+    });
+  }
+
+  static _asyncUser(user) {
+    if (user && user.accessToken) {
+      request.post(url.update, user).then(res => {
+        if (res && res.success) {
+          // let user = this.state.user;
+          // user.avatar = res.data.avatar;
+          // user.nickname = res.data.nickname;
+          let userUpdate = res.data;
           this.setState({
-            user,
-            avatarUploading: false,
-            avatarProgress: 0,
+            user: userUpdate,
+          }, () => {
+            AsyncStorage.setItem('user', JSON.stringify(userUpdate));
+            AlertIOS.alert('用户数据更新成功');
           });
+          // this.setState({
+          //   user: user
+          // }, () => {
+          //   AsyncStorage.setItem('user', res.data);
+          // });
         }
-      })
-      .catch(err => {
-        AlertIOS.alert('请求失败');
-        console.log(err);
       });
+    }
   }
 
   ///*使用 xhr 上传数据到 cloudinary*/
