@@ -8,6 +8,8 @@ import {
   Image,
   AsyncStorage,
   AlertIOS,
+  Modal,
+  TextInput,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -45,6 +47,7 @@ export default class Account extends Component {
       user,
       avatarProgress: 0,
       avatarUploading: false,
+      modalVisiable: false,
     };
   }
 
@@ -177,11 +180,11 @@ export default class Account extends Component {
           avatarUploading: false,
           avatarProgress: 0,
         });
-        Account._asyncUser.call(this, user);
+        Account._asyncUser.call(this, user);  //同步更新的数据到服务器
       }
     }).catch(err => {
-      AlertIOS.alert('请求失败');
       console.log(err);
+      AlertIOS.alert('请求失败');
     });
   }
 
@@ -243,6 +246,25 @@ export default class Account extends Component {
   //   };
   // }
 
+  static _edit() {
+    this.setState({
+      modalVisiable: true,
+    });
+  }
+
+  static _closeModal() {
+    this.setState({
+      modalVisiable: false,
+    });
+  }
+
+  static _changeUserState(key, value) {
+    let {user} = this.state;
+    user[key] = value;
+    this.setState({
+      user,
+    });
+  }
 
   render() {
     let user = this.state.user;
@@ -251,6 +273,7 @@ export default class Account extends Component {
       <View style={styles.container}>
         <View style={styles.toolbar}>
           <Text style={styles.toolbarTitle}>我的账户</Text>
+          <Text style={styles.toolbarExtra} onPress={Account._edit.bind(this)}>编辑</Text>
         </View>
 
         {
@@ -282,6 +305,53 @@ export default class Account extends Component {
             </View>
         }
 
+        <Modal animationType={'slide'} visible={this.state.modalVisiable}>
+          <View style={styles.modalContainer}>
+            <Icon name={'ios-close-outline'}
+                  style={styles.closeIcon}
+                  size={50}
+                  onPress={Account._closeModal.bind(this)}/>
+            <View style={styles.fieldItem}>
+              <Text style={styles.label}>昵称</Text>
+              <TextInput style={styles.inputField}
+                         placeholder={'输入你的名字'}
+                         autoCapitalize={'none'}
+                         autoCorrect={false}
+                         defaultValue={user.nickname}
+                         onChangeText={(text) => {
+                           Account._changeUserState.call(this, 'nickname', text);
+                         }}/>
+            </View>
+
+            <View style={styles.fieldItem}>
+              <Text style={styles.label}>年龄</Text>
+              <TextInput style={styles.inputField}
+                         placeholder={'输入你的年龄'}
+                         autoCapitalize={'none'}
+                         autoCorrect={false}
+                         defaultValue={user.age}
+                         onChangeText={(text) => {
+                           Account._changeUserState.call(this, 'age', text);
+                         }}/>
+            </View>
+
+            <View style={styles.fieldItem}>
+              <Text style={styles.label}>性别</Text>
+              <Icon.Button
+                style={[styles.gender, user.gender === 'male' && styles.genderChecked]}
+                name={'ios-paw'}
+                onPress={Account._changeUserState.bind(this, 'gender', 'male')}
+              >男</Icon.Button>
+              <Icon.Button
+                style={[styles.gender, user.gender === 'female' && styles.genderChecked]}
+                name={'ios-paw-outline'}
+                onPress={Account._changeUserState.bind(this, 'gender', 'female')}
+              >女</Icon.Button>
+
+            </View>
+
+          </View>
+        </Modal>
 
       </View>
     );
@@ -308,6 +378,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontWeight: '600',
+  },
+
+  toolbarExtra: {
+    position: 'absolute',
+    right: 10,
+    top: 26,
+    color: '#fff',
+    textAlign: 'right',
+    fontWeight: '600',
+    fontSize: 14,
   },
 
   avatarContainer: {
@@ -347,7 +427,55 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     color: '#999',
     backgroundColor: '#fff',
-  }
+  },
+
+  modalContainer: {
+    flex: 1,
+    paddingTop: 50,
+    backgroundColor: '#fff',
+  },
+
+  closeIcon: {
+    position: 'absolute',
+    right: 20,
+    width: 40,
+    height: 40,
+    textAlign: 'right',
+    top: 30,
+    color: '#ee735c',
+  },
+
+  fieldItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 50,
+    paddingLeft: 15,
+    paddingRight: 15,
+    marginTop: 20,
+    borderColor: '#eee',
+    borderBottomWidth: 1,
+  },
+
+  label: {
+    color: '#ccc',
+    marginRight: 10,
+  },
+
+  inputField: {
+    flex: 1,
+    height: 50,
+    color: '#666',
+    fontSize: 14,
+  },
+
+  gender: {
+    backgroundColor: '#999',
+  },
+
+  genderChecked: {
+    backgroundColor: '#ee735c',
+  },
 
 
 });
