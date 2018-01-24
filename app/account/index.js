@@ -14,7 +14,7 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Progress from 'react-native-progress';
-
+import Button from 'react-native-button';
 
 const screenWidth = Dimensions.get('window').width;
 import ImagePicker from 'react-native-image-picker';
@@ -189,24 +189,18 @@ export default class Account extends Component {
   }
 
   static _asyncUser(user) {
+    console.log('hear', user);
     if (user && user.accessToken) {
       request.post(url.update, user).then(res => {
         if (res && res.success) {
-          // let user = this.state.user;
-          // user.avatar = res.data.avatar;
-          // user.nickname = res.data.nickname;
           let userUpdate = res.data;
+          console.log('userUpdate', userUpdate);
           this.setState({
             user: userUpdate,
           }, () => {
+            Account._closeModal.call(this);
             AsyncStorage.setItem('user', JSON.stringify(userUpdate));
-            AlertIOS.alert('用户数据更新成功');
           });
-          // this.setState({
-          //   user: user
-          // }, () => {
-          //   AsyncStorage.setItem('user', res.data);
-          // });
         }
       });
     }
@@ -264,6 +258,10 @@ export default class Account extends Component {
     this.setState({
       user,
     });
+  }
+
+  static _logout() {
+    this.props.logout.call(this);
   }
 
   render() {
@@ -347,11 +345,13 @@ export default class Account extends Component {
                 name={'ios-paw-outline'}
                 onPress={Account._changeUserState.bind(this, 'gender', 'female')}
               >女</Icon.Button>
-
             </View>
 
+            <Button style={styles.btn} onPress={Account._asyncUser.bind(this, user)}>保存</Button>
           </View>
         </Modal>
+
+        <Button style={styles.btn} onPress={Account._logout.bind(this, user)}>退出</Button>
 
       </View>
     );
@@ -384,6 +384,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     top: 26,
+    width: 40,
+    height: 40,
     color: '#fff',
     textAlign: 'right',
     fontWeight: '600',
@@ -433,6 +435,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 50,
     backgroundColor: '#fff',
+    paddingHorizontal: 15,
   },
 
   closeIcon: {
@@ -450,8 +453,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 50,
-    paddingLeft: 15,
-    paddingRight: 15,
+    // paddingLeft: 15,
+    // paddingRight: 15,
     marginTop: 20,
     borderColor: '#eee',
     borderBottomWidth: 1,
@@ -477,5 +480,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#ee735c',
   },
 
+  btn: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: 'transparent',
+    borderColor: '#ee735c',
+    borderWidth: 1,
+    borderRadius: 4,
+    color: '#ee735c',
+  }
 
 });

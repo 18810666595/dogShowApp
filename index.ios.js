@@ -60,6 +60,14 @@ export default class dogShowApp extends Component {
     });
   }
 
+  static _logout() {
+    AsyncStorage.removeItem('user');
+    this.setState({
+      isLogin: false,
+      user: null,
+    });
+  }
+
   render() {
     if (!this.state.isLogin) {
       return (
@@ -115,7 +123,7 @@ export default class dogShowApp extends Component {
               selectedTab: 'account',
             });
           }}>
-          <Account/>
+          <Account user={this.state.user} logout={dogShowApp._logout.bind(this)}/>
         </Icon.TabBarItem>
       </TabBarIOS>
     );
