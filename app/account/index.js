@@ -20,24 +20,8 @@ const screenWidth = Dimensions.get('window').width;
 import ImagePicker from 'react-native-image-picker';
 import request from '../common/request';
 import url from '../common/url';
-import sha1 from 'sha1';
 import axios from 'axios';
-
-
-const CLOUDINARY = {
-  cloud_name: 'chengong',
-  api_key: '762542723573819',
-  api_secret: 'N0UgAw9s2mklHayQCm4UxrHzoeQ',
-  base: 'http://res.cloudinary.com/chengong',
-  image: 'https://api.cloudinary.com/v1_1/chengong/image/upload',
-  video: 'https://api.cloudinary.com/v1_1/chengong/video/upload',
-  audio: 'https://api.cloudinary.com/v1_1/chengong/raw/upload',
-
-};
-
-// function avatar(id, type) {
-//   return `${CLOUDINARY.base}/${type}/upload/${id}`;
-// }
+import config from "../common/config";
 
 export default class Account extends Component {
   constructor(props) {
@@ -64,6 +48,18 @@ export default class Account extends Component {
           });
         }
       }
+    });
+  }
+
+  static _getQiniuToken() {
+    /*构造七牛所需params*/
+    let {accessToken,} = this.state.user;
+    /*向自己的服务器发送请求*/
+    return request.post(url.signatureURL, {
+      accessToken,
+      cloud: 'qiniu',
+    }).catch(err => {
+      console.log(err);
     });
   }
 
@@ -96,49 +92,27 @@ export default class Account extends Component {
       else {
         // You can display the image using either data...
         const source = {uri: 'data:image/png;base64,' + response.data, isStatic: true};
-        console.log('source', source);
-        // let user = this.state.user;
-        // user.avatar = source.uri; //source 是一个对象
-        // AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
-        //   this.setState({
-        //     user: user
-        //   });
-        // });
 
-        /*构造 cloudinary 所需params*/
-        let timestamp = Date.now();
-        let tags = 'app,avatar';
-        let folder = 'avatar';
-        let {accessToken,} = this.state.user;
+        Account._getQiniuToken.call(this)
+          .then(res => {
+            console.log('res', res);
+            if (res && res.success) {
+              let token = res.data.token; //获取签名
+              let key = res.data.key; //获取 key
 
-        /*向自己的服务器发送请求*/
-        request.post(url.signatureURL, {
-          accessToken,
-          timestamp,
-          type: 'avatar',
-          folder,
-          tags,
-        }).then(res => {
-          if (res && res.success) {
-            /*下面是本地伪造签名，之后会在服务器端生成签名，这是为了先跑通流程*/
-            let signatureStr = `folder=${folder}&tags=${tags}&timestamp=${timestamp}${CLOUDINARY.api_secret}`;
-            let signature = sha1(signatureStr);
-
-            /*构建 post 到 cloudinary 的 form 数据 */
-            let body = new FormData();
-            body.append('folder', folder);
-            body.append('signature', signature);
-            body.append('tags', tags);
-            body.append('api_key', CLOUDINARY.api_key);
-            body.append('resource', 'image');
-            body.append('file', source.uri);
-            body.append('timestamp', timestamp);
-
-            Account._upload.call(this, body);
-          }
-        }).catch(err => {
-          console.log(err);
-        });
+              /*构建 post 到七牛的 form 数据 */
+              let body = new FormData();
+              body.append('token', token);
+              body.append('key', key);
+              body.append('file', {
+                type: 'image/png',
+                uri: source.uri,
+                name: key,
+              });
+              console.log('hear');
+              Account._upload.call(this, body);
+            }
+          });
       }
     });
   }
@@ -156,9 +130,8 @@ export default class Account extends Component {
       avatarUploading: true,
     });
 
-    axios.post(CLOUDINARY.image, body, {
+    axios.post(config.qiniu.upload, body, {
       onUploadProgress(progressEvent) {
-        // console.log('progressEvent', progressEvent);
         if (progressEvent.lengthComputable) {
           let {loaded, total} = progressEvent;
           let percent = Number((loaded / total).toFixed(2));
@@ -169,11 +142,12 @@ export default class Account extends Component {
         }
       }
     }).then(res => {
-      console.log('res', res);
-      if (res && res.data.public_id) {
+      console.log('res222222', res);
+      if (res && res.data.key) {
         let user = this.state.user;
         // user.avatar = avatar(res.data.public_id, 'image');
-        user.avatar = res.data.secure_url;
+        // user.avatar = res.data.secure_url;
+        user.avatar = config.qiniu.base + '/' + res.data.key;
         console.log('user.avatar', user.avatar);
         this.setState({
           user,
@@ -183,6 +157,7 @@ export default class Account extends Component {
         Account._asyncUser.call(this, user);  //同步更新的数据到服务器
       }
     }).catch(err => {
+      console.log('1111');
       console.log(err);
       AlertIOS.alert('请求失败');
     });
@@ -209,7 +184,7 @@ export default class Account extends Component {
   ///*使用 xhr 上传数据到 cloudinary*/
   // static _upload(body) {
   //   let xhr = new XMLHttpRequest();
-  //   let url = CLOUDINARY.image;
+  //   let url = config.cloudinary.image;
   //   xhr.open('POST', url);
   //   xhr.send(body);
   //   xhr.onload = () => {
